@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="Constancia Digital de Infracción con Código QR - MPCH"
+    />
+    <meta name="theme-color" content="#1E8449" />
+    <title>MPCH - Constancia de Acta Digital (RN-09 y RN-10)</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: radial-gradient(circle at 50% 20%, #1e293b, #090d16);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 8px;
+      }
+
+      /* Marco del Smartphone (Pixel 5: 360-400px dp) */
+      .mobile-frame {
+        width: 100%;
+        max-width: 400px;
+        min-height: 780px;
+        background-color: #f8fafc;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0;
+          background: #f8fafc;
+        }
+        .mobile-frame {
+          border-radius: 0;
+          min-height: 100vh;
+          box-shadow: none;
+        }
+      }
+
+      /* Encabezado Verde Conforme #1E8449 */
+      .header-success {
+        background-color: #1e8449;
+        padding: 26px 20px 22px;
+        color: #ffffff;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .success-icon-badge {
+        width: 50px;
+        height: 50px;
+        background: #ffffff;
+        color: #1e8449;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 900;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .header-title {
+        font-size: 15px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .header-subtitle {
+        font-size: 11.5px;
+        color: #d5f5e3;
+      }
+
+      .content {
+        flex: 1;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+      }
+
+      /* Tarjeta del Acta Digital */
+      .acta-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        border: 1.5px solid #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .acta-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 8px;
+      }
+
+      .acta-correlativo {
+        font-size: 13.5px;
+        font-weight: 900;
+        color: #c0392b; /* Rojo normativo */
+      }
+
+      .acta-fecha {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .data-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .data-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .data-item span:first-child {
+        color: #64748b;
+        font-weight: 600;
+        font-size: 11.5px;
+      }
+
+      .data-item span:last-child {
+        color: #0f172a;
+        font-weight: 800;
+        text-align: right;
+      }
+
+      /* Contenedor del Código QR (Aserción Playwright: canvas.qr-code) */
+      .qr-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1.5px dashed #94a3b8;
+        gap: 8px;
+      }
+
+      /* Selector oficial Playwright: canvas.qr-code */
+      canvas.qr-code {
+        width: 140px;
+        height: 140px;
+        background: #ffffff;
+        padding: 6px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .qr-caption {
+        font-size: 10.5px;
+        color: #64748b;
+        text-align: center;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .security-hash {
+        font-family: monospace;
+        font-size: 9.5px;
+        color: #475569;
+        background: #f1f5f9;
+        padding: 8px;
+        border-radius: 6px;
+        word-break: break-all;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+      }
+
+      /* Botones de Cierre ergonómicos de 56px */
+      .footer-actions {
+        padding: 14px 16px 18px;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-action {
+        min-height: 56px; /* Altura ergonómica WCAG 2.1 */
+        border: none;
+        border-radius: 10px;
+        font-size: 12.5px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+
+      .btn-action:active {
+        transform: scale(0.98);
+      }
+
+      .btn-new {
+        background-color: #1a5276;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(26, 82, 118, 0.25);
+      }
+
+      .btn-share {
+        background-color: #ffffff;
+        border: 1.5px solid #1a5276;
+        color: #1a5276;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-frame">
+      <!-- Encabezado de Éxito -->
+      <header class="header-success">
+        <div class="success-icon-badge">✓</div>
+        <h1 class="header-title">Acta de Infracción Emitida</h1>
+        <p class="header-subtitle">
+          Documento registrado con firma digital inmutable
+        </p>
+      </header>
+
+      <main class="content">
+        <article class="acta-card">
+          <div class="acta-header-row">
+            <span class="acta-correlativo" id="lblCorrelativo"
+              >ACTA N.° 0482-2026-MPCH</span
+            >
+            <span class="acta-fecha" id="lblFecha">17/10/2026 | 08:36:14</span>
+          </div>
+
+          <div class="data-grid">
+            <div class="data-item">
+              <span>Vehículo Intervenido:</span>
+              <span id="lblVehiculo">JKL-456 (Hyundai Elantra)</span>
+            </div>
+            <div class="data-item">
+              <span>Infractor / Titular:</span>
+              <span id="lblTitular">Ana Vargas Pinedo (DNI: 47120938)</span>
+            </div>
+            <div class="data-item">
+              <span>Tipificación:</span>
+              <span id="lblInfraccion" style="color: #c0392b"
+                >Infracción Muy Grave (Cód. M.1)</span
+              >
+            </div>
+            <div class="data-item">
+              <span>Inspector Interviniente:</span>
+              <span id="lblInspector">Dilmer Yalta (Cód. INSP-042)</span>
+            </div>
+            <div class="data-item">
+              <span>Lugar de Intervención:</span>
+              <span>Jr. Ayacucho cdra. 5, Chachapoyas</span>
+            </div>
+          </div>
+
+          <!-- Selector verificado por Playwright: canvas.qr-code -->
+          <div class="qr-container">
+            <canvas
+              class="qr-code"
+              id="qrCanvas"
+              width="140"
+              height="140"
+              aria-label="Código QR del Acta Digital"
+            ></canvas>
+            <span class="qr-caption"
+              >Escanee con smartphone para verificar autenticidad en el portal
+              MPCH</span
+            >
+          </div>
+
+          <div class="security-hash" id="lblHash">
+            Firma SHA256: 9b2d8f7e3a1c5b4e8a0f9d2e1c3b5a7e4f6d8b0c
+          </div>
+        </article>
+      </main>
+
+      <!-- Botones de Acción Global -->
+      <footer class="footer-actions">
+        <button
+          class="btn-action btn-new"
+          id="btnNuevaFiscalizacion"
+          type="button"
+        >
+          NUEVA FISCALIZACIÓN
+        </button>
+        <button class="btn-action btn-share" id="btnEnviarAcuse" type="button">
+          ENVIAR ACUSE DIGITAL
+        </button>
+      </footer>
+    </div>
+
+    <script>
+      // Recuperar datos del acta emitida desde sessionStorage o URL
+      const actaEmitida = JSON.parse(
+        sessionStorage.getItem("mpch_acta_emitida") || "{}",
+      );
+      const params = new URLSearchParams(window.location.search);
+      const correlativo =
+        params.get("correlativo") ||
+        actaEmitida.correlativo ||
+        "0482-2026-MPCH";
+      const placa = params.get("placa") || actaEmitida.placa || "JKL-456";
+
+      const lblCorrelativo = document.getElementById("lblCorrelativo");
+      const lblFecha = document.getElementById("lblFecha");
+      const lblVehiculo = document.getElementById("lblVehiculo");
+      const lblTitular = document.getElementById("lblTitular");
+      const lblInfraccion = document.getElementById("lblInfraccion");
+      const lblInspector = document.getElementById("lblInspector");
+      const lblHash = document.getElementById("lblHash");
+
+      lblCorrelativo.textContent = `ACTA N.° ${correlativo}`;
+
+      if (actaEmitida.fecha && actaEmitida.hora) {
+        lblFecha.textContent = `${actaEmitida.fecha} | ${actaEmitida.hora}`;
+      }
+
+      // Adaptar dinámicamente según la placa emitida
+      if (placa === "ABC-123") {
+        lblVehiculo.textContent = "ABC-123 (Toyota Yaris 2017)";
+        lblTitular.textContent = "Jorge Mendoza Ruiz (DNI: 43992110)";
+        lblInfraccion.textContent = "Discrepancia Registral (Cód. G.14)";
+      } else {
+        lblVehiculo.textContent = "JKL-456 (Hyundai Elantra 2015)";
+        lblTitular.textContent = "Ana Vargas Pinedo (DNI: 47120938)";
+        lblInfraccion.textContent =
+          "Infracción Muy Grave (Cód. M.1 - SOAT Vencido)";
+      }
+
+      if (actaEmitida.inspector) {
+        lblInspector.textContent = `${actaEmitida.inspector} (Cód. INSP-042)`;
+      }
+
+      if (actaEmitida.hashFirma) {
+        lblHash.textContent = `Firma ${actaEmitida.hashFirma}`;
+      }
+
+      // Dibujo del código QR interactivo en canvas.qr-code
+      const canvas = document.getElementById("qrCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, 140, 140);
+
+      ctx.fillStyle = "#0f172a";
+      function drawEye(x, y) {
+        ctx.fillRect(x, y, 32, 32);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(x + 5, y + 5, 22, 22);
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(x + 10, y + 10, 12, 12);
+      }
+      drawEye(10, 10);
+      drawEye(98, 10);
+      drawEye(10, 98);
+
+      // Patrón pseudoaleatorio coherente para simular QR
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if ((r + c) % 2 === 0 || (r * c) % 3 === 0) {
+            ctx.fillRect(50 + c * 5, 45 + r * 6, 4, 4);
+          }
+        }
+      }
+
+      // Botones de acción
+      document
+        .getElementById("btnNuevaFiscalizacion")
+        .addEventListener("click", () => {
+          // Limpiar consulta activa y retornar a pantalla de búsqueda
+          sessionStorage.removeItem("mpch_active_vehicle");
+          sessionStorage.removeItem("mpch_acta_pendiente");
+          sessionStorage.removeItem("mpch_acta_emitida");
+          window.location.href = "index1.html";
+        });
+
+      document
+        .getElementById("btnEnviarAcuse")
+        .addEventListener("click", () => {
+          alert(
+            "✓ Constancia y copia digital enviada al administrado vía notificación electrónica legal.",
+          );
+        });
+    </script>
+  </body>
+</html>

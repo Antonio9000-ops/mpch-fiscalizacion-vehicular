@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="Consulta Vehicular en Campo - Subgerencia de Transportes y Circulación Vial MPCH"
+    />
+    <meta name="theme-color" content="#1A5276" />
+    <title>MPCH - Consulta Vehicular en Campo (HU-01)</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        background: radial-gradient(circle at 50% 20%, #1e293b, #090d16);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 16px 8px;
+      }
+
+      /* Marco del Smartphone (Pixel 5: 360-400px dp) */
+      .mobile-frame {
+        width: 100%;
+        max-width: 400px;
+        min-height: 780px;
+        background-color: #f8fafc;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0;
+          background: #f8fafc;
+        }
+        .mobile-frame {
+          border-radius: 0;
+          min-height: 100vh;
+          box-shadow: none;
+        }
+      }
+
+      /* --- TOAST DE RESILIENCIA / TIMEOUT SUNARP (RN-05 & Playwright) --- */
+      .toast-alerta-conexion {
+        display: none;
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        right: 14px;
+        z-index: 1000;
+        background-color: #ffffff;
+        border: 2px solid #f39c12;
+        color: #000000;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.35;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        animation: slideDown 0.3s ease-out forwards;
+      }
+
+      .toast-alerta-conexion.show {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      @keyframes slideDown {
+        from {
+          transform: translateY(-30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* --- ENCABEZADO INSTITUCIONAL (#1A5276 - AAA 8.38:1) --- */
+      .header {
+        background-color: #1a5276;
+        padding: 20px 18px 22px;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .brand-section {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        max-width: 65%;
+      }
+
+      .badge-mpch {
+        background: #ffffff;
+        color: #1a5276;
+        font-weight: 900;
+        font-size: 11px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .brand-title {
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .user-info {
+        text-align: right;
+      }
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .user-role {
+        font-size: 10.5px;
+        color: #d4e6f1;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        background: #154360;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 12.5px;
+        color: #ffffff;
+      }
+
+      /* Subsanación HAL-UI-05: Conectividad con texto permanente y aria-label */
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11.5px;
+        color: #ebf5fb;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .indicador-red {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+        font-size: 11.5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        transition: background 0.3s;
+      }
+
+      .indicador-red .status-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #2ecc71;
+        border-radius: 50%;
+        box-shadow: 0 0 6px #2ecc71;
+        display: inline-block;
+      }
+
+      .indicador-red.offline-mode {
+        background: rgba(231, 76, 60, 0.3);
+      }
+      .indicador-red.offline-mode .status-dot {
+        background-color: #e74c3c;
+        box-shadow: 0 0 6px #e74c3c;
+      }
+
+      /* --- BLOQUE DE BÚSQUEDA --- */
+      .search-section {
+        text-align: center;
+        padding-top: 4px;
+      }
+
+      .search-title {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+
+      .search-subtitle {
+        font-size: 12px;
+        color: #d4e6f1;
+        margin-bottom: 12px;
+      }
+
+      .search-input-wrapper {
+        position: relative;
+        margin-bottom: 12px;
+      }
+
+      /* Input con selector Playwright #txtPlacaDni */
+      .search-input {
+        width: 100%;
+        height: 52px;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        padding: 0 16px;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #0f172a;
+        background-color: #ffffff;
+        outline: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        text-align: center;
+      }
+
+      .search-input:focus {
+        border-color: #f39c12;
+        box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.35);
+      }
+
+      .search-input::placeholder {
+        font-size: 12.5px;
+        font-weight: 500;
+        letter-spacing: normal;
+        text-transform: none;
+        color: #94a3b8;
+      }
+
+      /* Altura ergonómica de 56px para uso con guantes */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        flex: 1;
+        min-height: 56px;
+        border: none;
+        border-radius: 10px;
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active:not(:disabled) {
+        transform: scale(0.98);
+        filter: brightness(0.95);
+      }
+
+      /* Botón BUSCAR: Verde #1E8449 */
+      .btn-search {
+        background-color: #1e8449;
+      }
+
+      .btn-search:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .btn-qr {
+        background-color: #2980b9;
+      }
+
+      /* --- HISTORIAL DE CONSULTAS --- */
+      .content {
+        flex: 1;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .content-title {
+        color: #1a5276;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+      }
+
+      .content-counter {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .records-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .record-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1.5px solid #e2e8f0;
+        position: relative;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .record-card:active {
+        transform: scale(0.98);
+      }
+
+      .record-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 900;
+      }
+
+      .record-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .record-plate {
+        font-size: 15px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+      }
+
+      .record-details {
+        font-size: 11px;
+        color: #475569;
+        margin-top: 2px;
+      }
+
+      /* Estado 1: Verde Conforme #1E8449 */
+      .record-card.success {
+        border-left: 5px solid #1e8449;
+      }
+      .record-card.success .icon-circle {
+        background: #e8f8f0;
+        color: #1e8449;
+      }
+      .record-card.success .badge-status {
+        background: #e8f8f0;
+        color: #1e8449;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1px solid #1e8449;
+      }
+
+      /* Estado 2: Regla Ámbar #F39C12 con texto #000000 estricto (9.80:1 AAA) */
+      .record-card.warning {
+        border-left: 5px solid #f39c12;
+      }
+      .record-card.warning .icon-circle {
+        background: #fef5e7;
+        color: #000000;
+      }
+      .record-card.warning .badge-status {
+        background: #f39c12;
+        color: #000000;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      /* Estado 3: Rojo Infracción #C0392B */
+      .record-card.danger {
+        border-left: 5px solid #c0392b;
+      }
+      .record-card.danger .icon-circle {
+        background: #fdedec;
+        color: #c0392b;
+      }
+      .record-card.danger .badge-status {
+        background: #ffffff;
+        color: #c0392b;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        border: 1.5px solid #c0392b;
+      }
+
+      /* --- FOOTER ACTIONS --- */
+      .footer-actions {
+        padding: 12px 16px 16px;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-footer {
+        min-height: 48px;
+        border: none;
+        border-radius: 10px;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 11.5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+
+      .btn-acta {
+        background-color: #cbd5e1;
+        color: #64748b;
+        flex: 1.4;
+        cursor: not-allowed;
+      }
+
+      .btn-close {
+        background-color: #334155;
+        flex: 1;
+      }
+
+      .btn-close:active {
+        background-color: #1e293b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-frame">
+      <!-- Notificación Toast para pruebas de Resiliencia / Timeout SUNARP (RN-05 & Playwright) -->
+      <div
+        class="toast-alerta-conexion"
+        id="toastAlerta"
+        role="alert"
+        aria-live="assertive"
+      >
+        <span style="font-size: 18px">⚠️</span>
+        <span id="toastMsg"
+          >Servicio SUNARP no disponible. Consultando datos en caché local</span
+        >
+      </div>
+
+      <!-- Encabezado Institucional -->
+      <header class="header">
+        <div class="header-top">
+          <div class="brand-section">
+            <div class="badge-mpch">MPCH</div>
+            <div class="brand-title">
+              Subgerencia de Transportes y Circulación Vial
+            </div>
+          </div>
+          <div class="user-profile">
+            <div class="user-info">
+              <div class="user-name" id="userNameLabel">Insp. Dilmer Yalta</div>
+              <div class="user-role" id="userRoleLabel">INSPECTOR_CAMPO</div>
+            </div>
+            <div class="avatar" id="userAvatar">DY</div>
+          </div>
+        </div>
+
+        <!-- Subsanación HAL-UI-05: Estado de red con texto y accesibilidad completa -->
+        <div class="status-row">
+          <span id="currentDatetime">17/10/2026 | 08:30</span>
+          <div
+            class="indicador-red"
+            id="indicadorRed"
+            role="status"
+            aria-label="Conectividad de red: En línea"
+          >
+            <span class="status-dot"></span>
+            <span id="textRed">En línea</span>
+          </div>
+        </div>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="search-section">
+          <h1 class="search-title">Fiscalización Rápida en Campo</h1>
+          <p class="search-subtitle">
+            Valide habilitación vehicular y estado registral
+          </p>
+
+          <div class="search-input-wrapper">
+            <!-- Selector #txtPlacaDni verificado por Playwright -->
+            <input
+              type="text"
+              class="search-input"
+              id="txtPlacaDni"
+              name="txtPlacaDni"
+              placeholder="PLACA (6 CAR.) O DNI (8 DÍG.)"
+              maxlength="8"
+              autocomplete="off"
+              aria-label="Placa vehicular de 6 caracteres o DNI de 8 dígitos"
+            />
+          </div>
+
+          <div class="action-buttons">
+            <!-- Botón #btnBuscar: inicia deshabilitado conforme a BVA RN-01 y RN-11 -->
+            <button class="btn btn-search" id="btnBuscar" disabled>
+              <span>BUSCAR</span>
+            </button>
+            <button class="btn btn-qr" id="btnQr" type="button">
+              <span>📷 ESCANEAR QR</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Historial del Operativo con Dataset Semilla Oficial (Sección 3.2) -->
+      <main class="content">
+        <div class="content-header">
+          <span class="content-title"
+            >CONSULTAS DEL OPERATIVO (CHACHAPOYAS)</span
+          >
+          <span class="content-counter" id="recordCounter">4 registros</span>
+        </div>
+
+        <div class="records-list" id="recordsList">
+          <!-- Semilla 1: V1A-309 (Happy Path Conforme) -->
+          <article class="record-card success" onclick="cargarPlaca('V1A-309')">
+            <div class="record-left">
+              <div class="icon-circle" aria-label="Conforme">✓</div>
+              <div class="record-info">
+                <span class="record-plate">V1A-309</span>
+                <span class="record-details"
+                  >Dilmer Yalta Chávez • Toyota Probox</span
+                >
+              </div>
+            </div>
+            <span class="badge-status">HABILITADO</span>
+          </article>
+
+          <!-- Semilla 2: XYZ-789 (Alerta Ámbar ≤ 30 días - Texto Negro Obligatorio) -->
+          <article class="record-card warning" onclick="cargarPlaca('XYZ-789')">
+            <div class="record-left">
+              <div class="icon-circle" aria-label="Alerta">⚠</div>
+              <div class="record-info">
+                <span class="record-plate">XYZ-789</span>
+                <span class="record-details"
+                  >Carlos Rojas M. • Vence en 15 d</span
+                >
+              </div>
+            </div>
+            <span class="badge-status">POR VENCER</span>
+          </article>
+
+          <!-- Semilla 3: JKL-456 (Infracción Roja - Vencido) -->
+          <article class="record-card danger" onclick="cargarPlaca('JKL-456')">
+            <div class="record-left">
+              <div class="icon-circle" aria-label="Infracción">✕</div>
+              <div class="record-info">
+                <span class="record-plate">JKL-456</span>
+                <span class="record-details"
+                  >Ana Vargas Pinedo • SOAT Vencido</span
+                >
+              </div>
+            </div>
+            <span class="badge-status">INHABILITADO</span>
+          </article>
+
+          <!-- Semilla 4: ABC-123 (Discrepancia SUNARP) -->
+          <article class="record-card danger" onclick="cargarPlaca('ABC-123')">
+            <div class="record-left">
+              <div class="icon-circle" aria-label="Discrepancia">!</div>
+              <div class="record-info">
+                <span class="record-plate">ABC-123</span>
+                <span class="record-details"
+                  >Toyota Yaris • Discrepancia Color</span
+                >
+              </div>
+            </div>
+            <span class="badge-status">OBSERVADO</span>
+          </article>
+        </div>
+      </main>
+
+      <!-- Botones de Acción Global -->
+      <footer class="footer-actions">
+        <!-- Botón inactivo en pantalla 1 hasta que exista resultado infractor -->
+        <button
+          class="btn-footer btn-acta"
+          id="btnActa"
+          disabled
+          title="Debe consultar una unidad no conforme para emitir acta"
+        >
+          GENERAR ACTA DIGITAL
+        </button>
+        <button class="btn-footer btn-close" id="btnClose">CERRAR TURNO</button>
+      </footer>
+    </div>
+
+    <script>
+      // Recuperar inspector autenticado desde sessionStorage
+      const sessionData = JSON.parse(
+        sessionStorage.getItem("mpch_session") || "{}",
+      );
+      if (sessionData.name) {
+        document.getElementById("userNameLabel").textContent = sessionData.name;
+        document.getElementById("userRoleLabel").textContent = sessionData.role;
+      }
+
+      // --- ELEMENTOS DEL DOM ---
+      const txtPlacaDni = document.getElementById("txtPlacaDni");
+      const btnBuscar = document.getElementById("btnBuscar");
+      const btnQr = document.getElementById("btnQr");
+      const btnClose = document.getElementById("btnClose");
+      const toastAlerta = document.getElementById("toastAlerta");
+      const toastMsg = document.getElementById("toastMsg");
+      const indicadorRed = document.getElementById("indicadorRed");
+      const textRed = document.getElementById("textRed");
+
+      // --- BASE DE DATOS SEMILLA OFICIAL (Ley 29733) ---
+      const DATASET_SEMILLA = {
+        V1A309: {
+          placa: "V1A-309",
+          dni: "40812943",
+          titular: "Yalta Chávez, Dilmer",
+          marca: "Toyota",
+          modelo: "Probox (2018)",
+          color: "Blanco",
+          soatVence: "12/03/2027",
+          citvVence: "05/06/2027",
+          estado: "conforme",
+          estadoLabel: "HABILITADO",
+        },
+        40812943: {
+          placa: "V1A-309",
+          dni: "40812943",
+          titular: "Yalta Chávez, Dilmer",
+          marca: "Toyota",
+          modelo: "Probox (2018)",
+          color: "Blanco",
+          soatVence: "12/03/2027",
+          citvVence: "05/06/2027",
+          estado: "conforme",
+          estadoLabel: "HABILITADO",
+        },
+        XYZ789: {
+          placa: "XYZ-789",
+          dni: "42901844",
+          titular: "Carlos Rojas Medina",
+          marca: "Nissan",
+          modelo: "Sentra (2016)",
+          color: "Plata",
+          soatVence: "27/10/2026 (en 10 días)",
+          citvVence: "15/12/2026",
+          estado: "warning",
+          estadoLabel: "POR VENCER",
+        },
+        42901844: {
+          placa: "XYZ-789",
+          dni: "42901844",
+          titular: "Carlos Rojas Medina",
+          marca: "Nissan",
+          modelo: "Sentra (2016)",
+          color: "Plata",
+          soatVence: "27/10/2026 (en 10 días)",
+          citvVence: "15/12/2026",
+          estado: "warning",
+          estadoLabel: "POR VENCER",
+        },
+        JKL456: {
+          placa: "JKL-456",
+          dni: "47120938",
+          titular: "Ana Vargas Pinedo",
+          marca: "Hyundai",
+          modelo: "Elantra (2015)",
+          color: "Negro",
+          soatVence: "30/09/2026 (Vencido hace 17 días)",
+          citvVence: "10/08/2026 (Vencido)",
+          infraccionCod: "M.1",
+          infraccionDesc:
+            "Prestar servicio de transporte sin contar con SOAT vigente",
+          estado: "infraccion",
+          estadoLabel: "INHABILITADO",
+        },
+        47120938: {
+          placa: "JKL-456",
+          dni: "47120938",
+          titular: "Ana Vargas Pinedo",
+          marca: "Hyundai",
+          modelo: "Elantra (2015)",
+          color: "Negro",
+          soatVence: "30/09/2026 (Vencido hace 17 días)",
+          citvVence: "10/08/2026 (Vencido)",
+          infraccionCod: "M.1",
+          infraccionDesc:
+            "Prestar servicio de transporte sin contar con SOAT vigente",
+          estado: "infraccion",
+          estadoLabel: "INHABILITADO",
+        },
+        ABC123: {
+          placa: "ABC-123",
+          dni: "43992110",
+          titular: "Mendoza Ruiz, Jorge",
+          marca: "Toyota",
+          modelo: "Yaris (2017)",
+          color: "Rojo (Registrado en SUNARP) / Declarado Blanco",
+          soatVence: "14/11/2026",
+          citvVence: "18/12/2026",
+          infraccionCod: "G.14",
+          infraccionDesc:
+            "Discrepancia en características físicas vehiculares frente al registro registral",
+          estado: "infraccion",
+          estadoLabel: "OBSERVADO",
+        },
+      };
+
+      // --- REGLAS RN-01, RN-11 Y VALIDACIÓN BVA (CP-HU01-04 y CP-HU01-07) ---
+      txtPlacaDni.addEventListener("input", (e) => {
+        let val = e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+        e.target.value = val;
+
+        const len = val.length;
+        const esPlacaValida = len === 6; // RN-01: Exactamente 6 caracteres
+        const esDniValido = /^\d{8}$/.test(val); // RN-11: Exactamente 8 dígitos numéricos
+
+        if (esPlacaValida || esDniValido) {
+          btnBuscar.removeAttribute("disabled");
+        } else {
+          btnBuscar.setAttribute("disabled", "true");
+        }
+      });
+
+      // Envío al presionar Enter
+      txtPlacaDni.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !btnBuscar.disabled) {
+          btnBuscar.click();
+        }
+      });
+
+      // --- CONSULTA Y NAVEGACIÓN ---
+      btnBuscar.addEventListener("click", () => {
+        const valor = txtPlacaDni.value.trim().toUpperCase();
+
+        btnBuscar.setAttribute("disabled", "true");
+        btnBuscar.innerText = "CONSULTANDO...";
+
+        const registro = DATASET_SEMILLA[valor] || {
+          placa:
+            valor.length === 6
+              ? `${valor.slice(0, 3)}-${valor.slice(3)}`
+              : valor,
+          dni: "40812943",
+          titular: "Yalta Chávez, Dilmer",
+          marca: "Toyota",
+          modelo: "Probox (2018)",
+          color: "Blanco",
+          soatVence: "12/03/2027",
+          citvVence: "05/06/2027",
+          estado: "conforme",
+          estadoLabel: "HABILITADO",
+        };
+
+        // Guardar el vehículo activo para todo el flujo subsiguiente
+        sessionStorage.setItem("mpch_active_vehicle", JSON.stringify(registro));
+
+        setTimeout(() => {
+          if (registro.estado === "conforme") {
+            window.location.href = `index2.html?placa=${encodeURIComponent(registro.placa)}&estado=conforme`;
+          } else {
+            // Casos warning (XYZ-789), infraccion (JKL-456) o discrepancia (ABC-123) van a index3
+            window.location.href = `index3.html?placa=${encodeURIComponent(registro.placa)}&estado=${registro.estado}`;
+          }
+        }, 350);
+      });
+
+      function cargarPlaca(placa) {
+        txtPlacaDni.value = placa.replace("-", "");
+        txtPlacaDni.dispatchEvent(new Event("input"));
+        btnBuscar.focus();
+      }
+
+      // --- SIMULACIÓN DE RESILIENCIA Y CACHÉ LOCAL (RN-05 / Playwright E2E) ---
+      window.simularTimeoutSUNARP = function (
+        titular = "Yalta Chávez, Dilmer",
+      ) {
+        toastMsg.textContent =
+          "Servicio SUNARP no disponible. Consultando datos en caché local";
+        toastAlerta.classList.add("show");
+
+        indicadorRed.classList.add("offline-mode");
+        indicadorRed.setAttribute("aria-label", "Conectividad: Modo caché");
+        textRed.textContent = "Modo caché";
+
+        setTimeout(() => {
+          toastAlerta.classList.remove("show");
+        }, 5000);
+      };
+
+      btnQr.addEventListener("click", () => {
+        alert(
+          "Activando escáner de cámara: Acérquese al código QR del vehículo.",
+        );
+      });
+
+      btnClose.addEventListener("click", () => {
+        if (confirm("¿Desea cerrar el turno actual del inspector?")) {
+          sessionStorage.removeItem("mpch_session");
+          window.location.href = "login.html";
+        }
+      });
+    </script>
+  </body>
+</html>

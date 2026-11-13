@@ -1,0 +1,12 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/login.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/consulta-campo", "destination": "/index1.html" },
+    { "source": "/resultado-conforme", "destination": "/index2.html" },
+    { "source": "/resultado-infraccion", "destination": "/index3.html" },
+    { "source": "/emision-acta", "destination": "/index4.html" },
+    { "source": "/acta-exito", "destination": "/acta-exito.html" }
+  ]
+}
