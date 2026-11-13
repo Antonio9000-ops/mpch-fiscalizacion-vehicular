@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Control y Emisión de Fichas de Características Técnicas - MPCH"
+    />
+    <meta name="theme-color" content="#1A5276" />
+    <title>MPCH - Fichas de Características Técnicas (HU-02)</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .checklist-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .check-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 8px 12px;
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #0f172a;
+        cursor: pointer;
+      }
+      .check-item input {
+        width: 20px;
+        height: 20px;
+        accent-color: #1e8449;
+        flex-shrink: 0;
+      }
+      .ficha-item-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ficha-item-card.caducada {
+        border-left: 6px solid #c0392b;
+      }
+      .ficha-item-card.vigente {
+        border-left: 6px solid #f39c12;
+      }
+      .ficha-item-card.certificada {
+        border-left: 6px solid #1e8449;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-frame">
+      <div
+        class="toast-alerta-conexion toast-info"
+        id="toastFichas"
+        role="status"
+        aria-live="polite"
+      >
+        <span aria-hidden="true">ℹ️</span>
+        <span id="toastFichasMsg"></span>
+      </div>
+
+      <header class="header">
+        <div class="header-top">
+          <div class="brand-section">
+            <div class="badge-mpch">MPCH</div>
+            <div class="brand-title">
+              Subgerencia de Transportes y Circulación Vial
+            </div>
+          </div>
+          <div class="user-profile">
+            <div class="user-info">
+              <div class="user-name" id="userNameLabel">Especialista</div>
+              <div class="user-role" id="userRoleLabel">
+                ESPECIALISTA_OPERATIVO
+              </div>
+            </div>
+            <div class="avatar" id="userAvatar">MP</div>
+          </div>
+        </div>
+
+        <nav class="module-nav" aria-label="Módulos del sistema">
+          <a href="/consulta-campo" class="nav-pill">Campo</a>
+          <a href="/fichas" class="nav-pill active">Fichas</a>
+          <a href="/inscripcion" class="nav-pill">Inscripción</a>
+          <a href="/chatbot" class="nav-pill">Chatbot</a>
+        </nav>
+
+        <div class="search-section">
+          <h1 class="search-title">Fichas de Características Técnicas</h1>
+          <p class="search-subtitle">
+            Inspección de 20 ítems y vigencia legal de 3 días hábiles (Ley N.°
+            27444)
+          </p>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="search-input"
+              id="txtPlacaFicha"
+              data-testid="input-placa-ficha"
+              maxlength="7"
+              placeholder="PLACA (EJ. V1A-309, M1B-890, Z3X-112)"
+              aria-label="Placa vehicular para inspección técnica"
+            />
+            <button
+              class="btn-clear"
+              id="btnClearFicha"
+              type="button"
+              aria-label="Limpiar placa"
+            >
+              ✕
+            </button>
+          </div>
+
+          <button
+            class="btn btn-search"
+            id="btnValidarPermiso"
+            data-testid="btn-validar-permiso"
+            type="button"
+            style="width: 100%"
+            disabled
+          >
+            VALIDAR PERMISO DE TAXI (RN-06)
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Alerta de bloqueo o estado de permiso -->
+        <section id="estadoPermisoBox" aria-live="polite"></section>
+
+        <!-- Formulario de los 20 ítems técnicos (deshabilitado hasta validar permiso activo) -->
+        <section
+          id="secChecklist"
+          style="display: none"
+          data-testid="seccion-checklist"
+        >
+          <div class="content-header" style="margin-bottom: 8px">
+            <h2 class="content-title">
+              VERIFICACIÓN TÉCNICA (20 ÍTEMS OBLIGATORIOS)
+            </h2>
+            <span class="content-counter" id="lblConteoItems">0 / 20</span>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline"
+            id="btnMarcarTodos"
+            data-testid="btn-marcar-20"
+            style="width: 100%; margin-bottom: 10px"
+          >
+            ✓ MARCAR LOS 20 ÍTEMS CONFORMES
+          </button>
+
+          <div class="checklist-grid" id="checklistGrid"></div>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            id="btnGenerarFicha"
+            data-testid="btn-generar-ficha"
+            style="width: 100%; margin-top: 12px"
+            disabled
+          >
+            GENERAR FICHA TÉCNICA + QR
+          </button>
+        </section>
+
+        <!-- Resultado de Ficha o Certificado emitido con QR -->
+        <section
+          id="secResultadoDoc"
+          style="display: none"
+          data-testid="resultado-ficha-doc"
+        >
+          <article class="result-card status-conforme">
+            <h2 class="status-title" id="docTitulo" style="color: #1e8449">
+              Documento Generado
+            </h2>
+            <div class="summary-card">
+              <div class="summary-row">
+                <span class="summary-label">Código</span>
+                <span
+                  class="summary-value"
+                  id="docCodigo"
+                  data-testid="doc-codigo"
+                  >---</span
+                >
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Placa</span>
+                <span class="summary-value" id="docPlaca">---</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Plazo Legal (3 días hábiles)</span>
+                <span class="summary-value" id="docLimite">---</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Inspector / Hash</span>
+                <span class="summary-value" id="docHash" style="font-size: 10px"
+                  >---</span
+                >
+              </div>
+            </div>
+            <div style="display: flex; justify-content: center">
+              <canvas
+                class="qr-code"
+                id="qrFichaCanvas"
+                width="140"
+                height="140"
+                aria-label="Código QR de la ficha o certificado"
+              ></canvas>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnImprimirFicha"
+              onclick="window.print()"
+            >
+              📄 IMPRIMIR / DESCARGAR PDF
+            </button>
+          </article>
+        </section>
+
+        <!-- Bandeja de Control de Vigencia y Certificación (CP-HU02-02 / 03 / 05) -->
+        <section style="margin-top: 6px">
+          <div class="content-header" style="margin-bottom: 8px">
+            <h2 class="content-title">CONTROL DE FICHAS Y CERTIFICACIÓN</h2>
+            <span class="content-counter" id="lblTotalFichas">0 fichas</span>
+          </div>
+          <div
+            id="listaFichas"
+            class="records-list"
+            data-testid="lista-fichas"
+          ></div>
+        </section>
+      </main>
+
+      <footer class="footer-actions">
+        <a href="/consulta-campo" class="btn-action btn-secondary">
+          VOLVER A CONSULTA EN CAMPO
+        </a>
+      </footer>
+    </div>
+
+    <script type="module">
+      import {
+        validarPlaca,
+        calcularFechaLimite3DiasHabiles,
+        verificarVigenciaFicha,
+        generarHashSHA256,
+      } from "/js/domain.js";
+      import { inicializarGuardiaSesion } from "/js/session-guard.js";
+      import { getSupabaseClient } from "/js/supabase-client.js";
+
+      const sesion = inicializarGuardiaSesion([
+        "ESPECIALISTA_OPERATIVO",
+        "ADMIN",
+        "INSPECTOR_CAMPO",
+      ]);
+      if (!sesion) throw new Error("Sesión requerida");
+
+      const ITEMS_TECNICOS = [
+        "1. Carrocería sin abolladuras estructurales ni óxido severo",
+        "2. Luces bajas y altas operativas",
+        "3. Luces direccionales e intermitentes de emergencia",
+        "4. Luces posteriores de freno y retroceso",
+        "5. Neumáticos con cocada mínima reglamentaria (≥ 1.6 mm)",
+        "6. Sistema de frenos de servicio operativo",
+        "7. Freno de estacionamiento (freno de mano) funcional",
+        "8. Sistema de dirección sin holgura excesiva",
+        "9. Parabrisas sin rajaduras y limpiaparabrisas operativo",
+        "10. Espejos retrovisores laterales e interior completos",
+        "11. Cinturones de seguridad operativos en todos los asientos",
+        "12. Claxon / bocina conforme al reglamento",
+        "13. Extintor PQS vigente y sujeto reglamentariamente",
+        "14. Botiquín de primeros auxilios completo",
+        "15. Dos triángulos o conos de seguridad",
+        "16. Llanta de repuesto, gata y llave de ruedas",
+        "17. Placas de rodaje delantera y posterior legibles",
+        "18. Casquete luminoso superior de servicio Taxi",
+        "19. Velocímetro e indicadores de tablero operativos",
+        "20. Sistema de escape sin emisión excesiva de humos",
+      ];
+
+      const txtPlacaFicha = document.getElementById("txtPlacaFicha");
+      const btnValidarPermiso = document.getElementById("btnValidarPermiso");
+      const estadoPermisoBox = document.getElementById("estadoPermisoBox");
+      const secChecklist = document.getElementById("secChecklist");
+      const checklistGrid = document.getElementById("checklistGrid");
+      const lblConteoItems = document.getElementById("lblConteoItems");
+      const btnGenerarFicha = document.getElementById("btnGenerarFicha");
+      const secResultadoDoc = document.getElementById("secResultadoDoc");
+      const listaFichas = document.getElementById("listaFichas");
+
+      let feriadosSet = new Set();
+      let permisoActivoActual = null;
+      let vehiculoActual = null;
+
+      function mostrarToast(msg) {
+        const t = document.getElementById("toastFichas");
+        document.getElementById("toastFichasMsg").textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 5000);
+      }
+
+      // Renderizar 20 checkboxes
+      checklistGrid.innerHTML = ITEMS_TECNICOS.map(
+        (texto, idx) => `
+          <label class="check-item" for="chkItem${idx}">
+            <input type="checkbox" id="chkItem${idx}" class="chk-tecnico" data-item="${idx + 1}" />
+            <span>${texto}</span>
+          </label>
+        `,
+      ).join("");
+
+      function actualizarConteo() {
+        const marcados = checklistGrid.querySelectorAll(
+          ".chk-tecnico:checked",
+        ).length;
+        lblConteoItems.textContent = `${marcados} / 20`;
+        btnGenerarFicha.disabled = !(permisoActivoActual && marcados === 20);
+      }
+
+      checklistGrid.addEventListener("change", actualizarConteo);
+
+      document
+        .getElementById("btnMarcarTodos")
+        .addEventListener("click", () => {
+          checklistGrid
+            .querySelectorAll(".chk-tecnico")
+            .forEach((c) => (c.checked = true));
+          actualizarConteo();
+        });
+
+      txtPlacaFicha.addEventListener("input", (e) => {
+        e.target.value = e.target.value
+          .replace(/[^a-zA-Z0-9-]/g, "")
+          .toUpperCase();
+        btnValidarPermiso.disabled = !validarPlaca(e.target.value).valida;
+      });
+
+      document.getElementById("btnClearFicha").addEventListener("click", () => {
+        txtPlacaFicha.value = "";
+        btnValidarPermiso.disabled = true;
+        estadoPermisoBox.innerHTML = "";
+        secChecklist.style.display = "none";
+        permisoActivoActual = null;
+        txtPlacaFicha.focus();
+      });
+
+      async function cargarFeriados() {
+        const sb = await getSupabaseClient();
+        if (!sb) return;
+        const { data } = await sb
+          .from("feriados_config")
+          .select("fecha")
+          .eq("activo", true);
+        if (data) {
+          feriadosSet = new Set(data.map((f) => String(f.fecha).slice(0, 10)));
+        }
+      }
+
+      async function dibujarQR(canvasId, contenido) {
+        const canvas = document.getElementById(canvasId);
+        try {
+          const QRCode = (
+            await import("https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm")
+          ).default;
+          await QRCode.toCanvas(canvas, contenido, { width: 140, margin: 1 });
+        } catch {
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#FFFFFF";
+          ctx.fillRect(0, 0, 140, 140);
+          ctx.fillStyle = "#0F172A";
+          ctx.font = "bold 11px monospace";
+          ctx.fillText("QR-MPCH", 38, 74);
+        }
+      }
+
+      async function mostrarDocumentoEmitido({
+        titulo,
+        codigo,
+        placa,
+        limite,
+        hash,
+      }) {
+        secResultadoDoc.style.display = "block";
+        document.getElementById("docTitulo").textContent = titulo;
+        document.getElementById("docCodigo").textContent = codigo;
+        document.getElementById("docPlaca").textContent = placa;
+        document.getElementById("docLimite").textContent = limite;
+        document.getElementById("docHash").textContent = hash;
+        await dibujarQR(
+          "qrFichaCanvas",
+          JSON.stringify({ entidad: "MPCH", codigo, placa, hash }),
+        );
+      }
+
+      // Validar Permiso de Taxi (RN-06 / CP-HU02-04)
+      btnValidarPermiso.addEventListener("click", async () => {
+        const p = validarPlaca(txtPlacaFicha.value);
+        if (!p.valida) return;
+
+        permisoActivoActual = null;
+        vehiculoActual = null;
+        secChecklist.style.display = "none";
+        secResultadoDoc.style.display = "none";
+        estadoPermisoBox.innerHTML = "";
+
+        const sb = await getSupabaseClient();
+        if (!sb) {
+          estadoPermisoBox.innerHTML = `<div class="alert-banner-accessible">⚠️ Configure Supabase en js/supabase-config.js.</div>`;
+          return;
+        }
+
+        const { data: veh } = await sb
+          .from("vehiculos")
+          .select("*")
+          .eq("placa_normalizada", p.normalizada)
+          .maybeSingle();
+
+        const { data: permiso } = await sb
+          .from("permisos_taxi")
+          .select("*")
+          .eq("placa_normalizada", p.normalizada)
+          .eq("estado", "VIGENTE")
+          .maybeSingle();
+
+        // RN-06: Bloqueo si no tiene permiso de taxi vigente
+        if (!permiso) {
+          estadoPermisoBox.innerHTML = `
+            <div class="alert-banner-accessible" role="alert" data-testid="alerta-sin-permiso">
+              ⛔ No existe un permiso de operación vigente para la placa ingresada (${p.formateada}). Regularice el permiso antes de continuar.
+              <div style="margin-top: 10px">
+                <a href="/inscripcion?placa=${encodeURIComponent(p.formateada)}" class="btn btn-primary" data-testid="link-regularizar-permiso">
+                  IR A INSCRIPCIÓN DE TAXI (HU-03)
+                </a>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        permisoActivoActual = permiso;
+        vehiculoActual = veh || {
+          placa: p.formateada,
+          placa_normalizada: p.normalizada,
+        };
+
+        estadoPermisoBox.innerHTML = `
+          <div class="tooltip-info-conforme" role="status" data-testid="permiso-valido-banner">
+            ✓ Permiso vigente N.° ${permiso.numero_permiso} (${vehiculoActual.marca || ""} ${vehiculoActual.modelo || ""}). Complete los 20 ítems.
+          </div>
+        `;
+        checklistGrid
+          .querySelectorAll(".chk-tecnico")
+          .forEach((c) => (c.checked = false));
+        actualizarConteo();
+        secChecklist.style.display = "block";
+      });
+
+      // Generar Ficha Técnica (RN-07, RN-09, RN-10 / CP-HU02-01)
+      btnGenerarFicha.addEventListener("click", async () => {
+        if (!permisoActivoActual) return;
+        btnGenerarFicha.disabled = true;
+        btnGenerarFicha.textContent = "GENERANDO...";
+
+        const ahora = new Date();
+        const fechaLimite = calcularFechaLimite3DiasHabiles(ahora, feriadosSet);
+        const itemsJson = {};
+        checklistGrid.querySelectorAll(".chk-tecnico").forEach((c) => {
+          itemsJson[`item_${c.dataset.item}`] = c.checked;
+        });
+
+        const hash = `SHA256-${await generarHashSHA256(`${permisoActivoActual.placa_normalizada}|${ahora.toISOString()}|${sesion.codigo_usuario}`)}`;
+
+        const sb = await getSupabaseClient();
+        const { data, error } = await sb
+          .from("fichas_tecnicas")
+          .insert({
+            placa_normalizada: permisoActivoActual.placa_normalizada,
+            permiso_id: permisoActivoActual.id,
+            items_verificacion: itemsJson,
+            total_items_aprobados: 20,
+            inspector_usuario: sesion.codigo_usuario,
+            inspector_nombre: sesion.nombre_completo,
+            fecha_emision: ahora.toISOString(),
+            fecha_limite_habil: fechaLimite.toISOString(),
+            estado: "EMITIDA",
+            hash_auditoria: hash,
+          })
+          .select()
+          .single();
+
+        if (error || !data) {
+          estadoPermisoBox.innerHTML = `<div class="alert-banner-accessible">⛔ Error al registrar ficha: ${error?.message || "desconocido"}</div>`;
+          btnGenerarFicha.disabled = false;
+          btnGenerarFicha.textContent = "GENERAR FICHA TÉCNICA + QR";
+          return;
+        }
+
+        await sb.from("auditoria_logs").insert({
+          modulo: "HU02_FICHAS",
+          accion: "EMISION_FICHA_TECNICA",
+          usuario_codigo: sesion.codigo_usuario,
+          detalle: {
+            codigo_ficha: data.codigo_ficha,
+            placa: data.placa_normalizada,
+          },
+        });
+
+        secChecklist.style.display = "none";
+        await mostrarDocumentoEmitido({
+          titulo: "Ficha Técnica Registrada (HU-02)",
+          codigo: data.codigo_ficha,
+          placa: permisoActivoActual.placa_normalizada,
+          limite: new Date(data.fecha_limite_habil).toLocaleString("es-PE"),
+          hash: data.hash_auditoria,
+        });
+        mostrarToast(
+          `Ficha ${data.codigo_ficha} generada. Válida hasta ${new Date(data.fecha_limite_habil).toLocaleDateString("es-PE")}.`,
+        );
+        await cargarListaFichas();
+      });
+
+      // Listar fichas y controlar emisión de certificado dentro de 3 días hábiles (CP-HU02-02 / 03 / 05)
+      async function cargarListaFichas() {
+        const sb = await getSupabaseClient();
+        if (!sb) return;
+
+        const { data: fichas } = await sb
+          .from("fichas_tecnicas")
+          .select("*")
+          .order("fecha_emision", { ascending: false })
+          .limit(15);
+
+        if (!fichas || fichas.length === 0) {
+          document.getElementById("lblTotalFichas").textContent = "0 fichas";
+          listaFichas.innerHTML = `<p class="result-footer-note">No hay fichas registradas todavía.</p>`;
+          return;
+        }
+
+        document.getElementById("lblTotalFichas").textContent =
+          `${fichas.length} fichas`;
+        listaFichas.innerHTML = fichas
+          .map((f) => {
+            const vig = verificarVigenciaFicha(
+              f.fecha_emision,
+              new Date(),
+              feriadosSet,
+            );
+            const esCertificada = f.estado === "CERTIFICADA";
+            const caducada =
+              !esCertificada && (!vig.vigente || f.estado === "CADUCADA");
+            const cls = esCertificada
+              ? "certificada"
+              : caducada
+                ? "caducada"
+                : "vigente";
+            const badgeText = esCertificada
+              ? `CERTIFICADA (${f.codigo_certificado})`
+              : caducada
+                ? "CADUCADA (>3 DÍAS HÁBILES)"
+                : "VIGENTE PARA CERTIFICAR";
+
+            return `
+              <article class="ficha-item-card ${cls}" data-testid="ficha-card-${f.codigo_ficha}">
+                <div class="summary-row">
+                  <strong>${f.codigo_ficha} — Placa ${f.placa_normalizada}</strong>
+                  <span style="font-size: 11px; font-weight: 900">${badgeText}</span>
+                </div>
+                <div style="font-size: 11.5px; color: #475569">
+                  Emitida: ${new Date(f.fecha_emision).toLocaleString("es-PE")} • Límite legal: ${new Date(f.fecha_limite_habil).toLocaleString("es-PE")}
+                </div>
+                <div id="msg-${f.id}"></div>
+                ${
+                  !esCertificada
+                    ? `<button type="button" class="btn ${caducada ? "btn-danger" : "btn-success"} btn-emitir-cert" data-id="${f.id}" data-testid="btn-certificar-${f.codigo_ficha}">
+                         EMITIR CERTIFICADO
+                       </button>`
+                    : `<button type="button" class="btn btn-primary btn-ver-cert" data-codigo="${f.codigo_certificado}" data-placa="${f.placa_normalizada}" data-limite="${f.fecha_limite_habil}" data-hash="${f.hash_auditoria}">
+                         VER CERTIFICADO QR
+                       </button>`
+                }
+              </article>
+            `;
+          })
+          .join("");
+
+        listaFichas.querySelectorAll(".btn-emitir-cert").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const ficha = fichas.find((x) => x.id === btn.dataset.id);
+            const vig = verificarVigenciaFicha(
+              ficha.fecha_emision,
+              new Date(),
+              feriadosSet,
+            );
+            const msgBox = document.getElementById(`msg-${ficha.id}`);
+
+            // RN-07 y RN-08: Bloqueo estricto si superó 3 días hábiles
+            if (!vig.vigente || ficha.estado === "CADUCADA") {
+              await sb
+                .from("fichas_tecnicas")
+                .update({ estado: "CADUCADA" })
+                .eq("id", ficha.id);
+
+              msgBox.innerHTML = `
+                <div class="alert-banner-accessible" role="alert" data-testid="alerta-ficha-caducada">
+                  ⛔ La ficha de constatación ha caducado (superó el plazo de 3 días hábiles bajo Arts. 144–145 Ley N.° 27444). Debe generar una nueva ficha antes de emitir el certificado.
+                </div>
+              `;
+              return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "CERTIFICANDO...";
+
+            const { data: certCode } = await sb.rpc(
+              "generar_siguiente_certificado",
+            );
+            const codigoCertificado =
+              certCode || `CCT-2026-${Date.now().toString().slice(-5)}`;
+
+            await sb
+              .from("fichas_tecnicas")
+              .update({
+                estado: "CERTIFICADA",
+                codigo_certificado: codigoCertificado,
+                certificado_en: new Date().toISOString(),
+              })
+              .eq("id", ficha.id);
+
+            await sb.from("auditoria_logs").insert({
+              modulo: "HU02_FICHAS",
+              accion: "EMISION_CERTIFICADO",
+              usuario_codigo: sesion.codigo_usuario,
+              detalle: {
+                codigo_ficha: ficha.codigo_ficha,
+                codigo_certificado: codigoCertificado,
+              },
+            });
+
+            await mostrarDocumentoEmitido({
+              titulo: "Certificado de Constatación Emitido",
+              codigo: codigoCertificado,
+              placa: ficha.placa_normalizada,
+              limite: new Date(ficha.fecha_limite_habil).toLocaleString(
+                "es-PE",
+              ),
+              hash: ficha.hash_auditoria,
+            });
+            mostrarToast(
+              `Certificado ${codigoCertificado} emitido correctamente.`,
+            );
+            await cargarListaFichas();
+          });
+        });
+
+        listaFichas.querySelectorAll(".btn-ver-cert").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            mostrarDocumentoEmitido({
+              titulo: "Certificado de Constatación Emitido",
+              codigo: btn.dataset.codigo,
+              placa: btn.dataset.placa,
+              limite: new Date(btn.dataset.limite).toLocaleString("es-PE"),
+              hash: btn.dataset.hash,
+            });
+            secResultadoDoc.scrollIntoView({ behavior: "smooth" });
+          });
+        });
+      }
+
+      await cargarFeriados();
+      await cargarListaFichas();
+    </script>
+  </body>
+</html>

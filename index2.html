@@ -2,472 +2,29 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Detalle de Consulta Conforme - Subgerencia de Transportes MPCH"
     />
     <meta name="theme-color" content="#1A5276" />
     <title>MPCH - Detalle Consulta Conforme (CP-HU01-01)</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      body {
-        background: radial-gradient(circle at 50% 20%, #1e293b, #090d16);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 16px 8px;
-      }
-
-      /* Marco del Smartphone (Pixel 5: 360-400px dp) */
-      .mobile-frame {
-        width: 100%;
-        max-width: 400px;
-        min-height: 780px;
-        background-color: #f8fafc;
-        border-radius: 28px;
-        overflow: hidden;
-        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 0;
-          background: #f8fafc;
-        }
-        .mobile-frame {
-          border-radius: 0;
-          min-height: 100vh;
-          box-shadow: none;
-        }
-      }
-
-      /* --- ENCABEZADO INSTITUCIONAL (#1A5276 - AAA 8.38:1) --- */
-      .header {
-        background-color: #1a5276;
-        padding: 20px 18px 22px;
-        color: #ffffff;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-
-      .brand-section {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        max-width: 65%;
-      }
-
-      .badge-mpch {
-        background: #ffffff;
-        color: #1a5276;
-        font-weight: 900;
-        font-size: 11px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .brand-title {
-        font-size: 11px;
-        font-weight: 800;
-        line-height: 1.25;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-
-      .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .user-info {
-        text-align: right;
-      }
-
-      .user-name {
-        font-size: 13px;
-        font-weight: 700;
-        line-height: 1.2;
-      }
-
-      .user-role {
-        font-size: 10.5px;
-        color: #d4e6f1;
-      }
-
-      .avatar {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 2px solid #ffffff;
-        background: #154360;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 12.5px;
-        color: #ffffff;
-      }
-
-      /* Subsanación HAL-UI-05: Conectividad con texto permanente y aria-label */
-      .status-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 11.5px;
-        color: #ebf5fb;
-        padding-top: 6px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-
-      .indicador-red {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-weight: 700;
-        font-size: 11.5px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .indicador-red .status-dot {
-        width: 8px;
-        height: 8px;
-        background-color: #2ecc71;
-        border-radius: 50%;
-        box-shadow: 0 0 6px #2ecc71;
-        display: inline-block;
-      }
-
-      /* --- BLOQUE DE BÚSQUEDA --- */
-      .search-section {
-        text-align: center;
-        padding-top: 4px;
-      }
-
-      .search-title {
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        margin-bottom: 3px;
-      }
-
-      .search-subtitle {
-        font-size: 12px;
-        color: #d4e6f1;
-        margin-bottom: 12px;
-      }
-
-      .search-input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-
-      .search-input {
-        width: 100%;
-        height: 52px;
-        border: 2px solid #1e8449; /* Borde verde de validación conforme */
-        border-radius: 10px;
-        padding: 0 44px 0 16px;
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: #0f172a;
-        background-color: #ffffff;
-        outline: none;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-        text-align: center;
-      }
-
-      .btn-clear {
-        position: absolute;
-        right: 12px;
-        background: transparent;
-        border: none;
-        color: #64748b;
-        font-size: 18px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .btn-clear:hover {
-        color: #0f172a;
-      }
-
-      /* Altura ergonómica de 56px para guantes en campo */
-      .action-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .btn {
-        flex: 1;
-        min-height: 56px;
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        font-size: 13.5px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
-
-      .btn:active:not(:disabled) {
-        transform: scale(0.98);
-        filter: brightness(0.95);
-      }
-
-      .btn-search {
-        background-color: #1e8449;
-      }
-
-      .btn-qr {
-        background-color: #2980b9;
-      }
-
-      /* --- CONTENEDOR DEL RESULTADO CONFORME (CP-HU01-01) --- */
-      .content {
-        flex: 1;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Selectores Playwright obligatorios: card-result, card-resultado, status-conforme */
-      .result-card.card-result.card-resultado.status-conforme {
-        background: #ffffff;
-        border-radius: 14px;
-        padding: 18px 16px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        border: 2px solid #1e8449; /* Borde verde conforme #1E8449 */
-      }
-
-      .result-card::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 7px;
-        background: #1e8449;
-        border-radius: 12px 0 0 12px;
-      }
-
-      .result-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #e2e8f0;
-      }
-
-      /* Selector Playwright obligatorio: .semaforo-verde */
-      .status-icon-circle.semaforo-verde {
-        width: 44px;
-        height: 44px;
-        background-color: #e8f8f0;
-        color: #1e8449;
-        border: 2px solid #1e8449;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        font-weight: 900;
-        flex-shrink: 0;
-      }
-
-      .status-title-box {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .status-title {
-        font-size: 15px;
-        font-weight: 900;
-        color: #1e8449; /* Verde Conforme */
-        letter-spacing: 0.3px;
-        line-height: 1.2;
-      }
-
-      .status-subtitle {
-        font-size: 11.5px;
-        color: #475569;
-        margin-top: 3px;
-        font-weight: 600;
-      }
-
-      .result-body {
-        display: flex;
-        flex-direction: column;
-        gap: 11px;
-      }
-
-      .data-group {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .data-row-two-col {
-        display: grid;
-        grid-template-columns: 1fr 1.35fr;
-        gap: 12px;
-      }
-
-      .label {
-        font-size: 11px;
-        color: #64748b;
-        margin-bottom: 2px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-
-      .val-primary {
-        font-size: 14.5px;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .val-check {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #1e8449;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .val-check span.check {
-        font-weight: 900;
-        font-size: 13px;
-      }
-
-      .result-footer-note {
-        font-size: 11px;
-        color: #64748b;
-        line-height: 1.4;
-        padding-top: 10px;
-        border-top: 1px solid #e2e8f0;
-      }
-
-      /* --- FOOTER Y SUBSANACIÓN HAL-UI-04 --- */
-      .footer-actions {
-        padding: 14px 16px 18px;
-        background: #ffffff;
-        border-top: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .footer-buttons-row {
-        display: flex;
-        gap: 10px;
-      }
-
-      .btn-footer {
-        min-height: 56px; /* Altura ergonómica WCAG 2.1 */
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        font-weight: 800;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-transform: uppercase;
-        transition: all 0.2s;
-      }
-
-      /* Botón inactivo según CP-HU01-01 y HAL-UI-04 */
-      .btn-acta {
-        background-color: #cbd5e1;
-        color: #64748b;
-        flex: 1.4;
-        cursor: not-allowed;
-        border: 1px solid #94a3b8;
-      }
-
-      .btn-close {
-        background-color: #334155;
-        flex: 1;
-        cursor: pointer;
-      }
-
-      .btn-close:active {
-        background-color: #1a5276;
-      }
-
-      /* Subsanación obligatoria HAL-UI-04 con contraste óptimo */
-      .tooltip-info-conforme {
-        font-size: 11px;
-        font-weight: 700;
-        color: #1e8449;
-        background-color: #e8f8f0;
-        border: 1.5px solid #1e8449;
-        padding: 8px 12px;
-        border-radius: 8px;
-        text-align: center;
-        line-height: 1.35;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <div class="mobile-frame">
-      <!-- Encabezado Institucional -->
+      <div
+        class="toast-alerta-conexion"
+        id="toastAlerta"
+        role="alert"
+        aria-live="assertive"
+      >
+        <span aria-hidden="true">⚠️</span>
+        <span id="toastMsg"
+          >Servicio SUNARP no disponible. Consultando datos en caché local</span
+        >
+      </div>
+
       <header class="header">
         <div class="header-top">
           <div class="brand-section">
@@ -478,28 +35,34 @@
           </div>
           <div class="user-profile">
             <div class="user-info">
-              <div class="user-name" id="userNameLabel">Insp. Dilmer Yalta</div>
+              <div class="user-name" id="userNameLabel">Inspector</div>
               <div class="user-role" id="userRoleLabel">INSPECTOR_CAMPO</div>
             </div>
-            <div class="avatar" id="userAvatar">DY</div>
+            <div class="avatar" id="userAvatar">MP</div>
           </div>
         </div>
 
-        <!-- Subsanación HAL-UI-05: Estado de red dual con texto y aria-label -->
+        <nav class="module-nav" aria-label="Módulos del sistema">
+          <a href="/consulta-campo" class="nav-pill active">Campo</a>
+          <a href="/fichas" class="nav-pill">Fichas</a>
+          <a href="/inscripcion" class="nav-pill">Inscripción</a>
+          <a href="/chatbot" class="nav-pill">Chatbot</a>
+        </nav>
+
         <div class="status-row">
-          <span id="currentDatetime">17/10/2026 | 08:34</span>
+          <span id="currentDatetime">--/--/---- | --:--</span>
           <div
             class="indicador-red"
             id="indicadorRed"
+            data-testid="indicador-red"
             role="status"
             aria-label="Conectividad de red: En línea"
           >
-            <span class="status-dot"></span>
-            <span>En línea</span>
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="textRed">En línea</span>
           </div>
         </div>
 
-        <!-- Buscador fijado con valor consultado -->
         <div class="search-section">
           <h1 class="search-title">Fiscalización Rápida en Campo</h1>
           <p class="search-subtitle">
@@ -507,43 +70,53 @@
           </p>
 
           <div class="search-input-wrapper">
-            <!-- Selector #txtPlacaDni verificado por Playwright -->
             <input
               type="text"
               class="search-input"
-              value="V1A-309"
               id="txtPlacaDni"
               name="txtPlacaDni"
+              data-testid="input-placa-dni"
               maxlength="8"
-              placeholder="PLACA O DNI"
+              placeholder="PLACA (6 CAR.) O DNI (8 DÍG.)"
               aria-label="Placa o DNI consultado"
             />
             <button
               class="btn-clear"
               id="btnClear"
+              data-testid="btn-clear"
               type="button"
-              title="Limpiar y volver a buscar"
+              aria-label="Limpiar placa"
+              title="Limpiar"
             >
               ✕
             </button>
           </div>
 
           <div class="action-buttons">
-            <button class="btn btn-search" id="btnBuscar" type="button">
-              <span>NUEVA BÚSQUEDA</span>
+            <button
+              class="btn btn-search"
+              id="btnBuscar"
+              data-testid="btn-buscar"
+              type="button"
+            >
+              <span>BUSCAR</span>
             </button>
-            <button class="btn btn-qr" id="btnQr" type="button">
-              <span>📷 QR</span>
-            </button>
+            <a
+              href="/consulta-campo"
+              class="btn btn-qr"
+              data-testid="btn-nueva-consulta-top"
+            >
+              <span>📷 QR / INICIO</span>
+            </a>
           </div>
         </div>
       </header>
 
-      <!-- Detalle de la Consulta Conforme (CP-HU01-01) -->
       <main class="content">
-        <!-- Clases de aserción E2E Playwright: card-result, card-resultado, status-conforme -->
-        <article class="result-card card-result card-resultado status-conforme">
-          <!-- Ícono con selector Playwright .semaforo-verde -->
+        <article
+          class="result-card card-result card-resultado status-conforme"
+          data-testid="card-resultado-conforme"
+        >
           <div class="result-header">
             <div
               class="status-icon-circle semaforo-verde"
@@ -551,187 +124,231 @@
             >
               ✓
             </div>
-            <div class="status-title-box">
-              <h2 class="status-title">HABILITADO / CONFORME</h2>
+            <div>
+              <h2 class="status-title" style="color: #1e8449">
+                HABILITADO / CONFORME
+              </h2>
               <p class="status-subtitle">
                 Unidad formalizada sin infracciones vigentes
               </p>
             </div>
           </div>
 
-          <!-- Campos de información que certifican el texto "Yalta Chávez, Dilmer" -->
           <div class="result-body">
             <div class="data-group">
               <span class="label">Titular Registral (SUNARP)</span>
-              <span class="val-primary" id="txtTitular"
-                >Yalta Chávez, Dilmer</span
+              <span
+                class="val-primary"
+                id="txtTitular"
+                data-testid="txt-titular"
+                >Cargando...</span
               >
             </div>
 
             <div class="data-row-two-col">
               <div class="data-group">
                 <span class="label">Placa de Rodaje</span>
-                <span class="val-primary" id="txtPlacaResultado">V1A-309</span>
+                <span
+                  class="val-primary"
+                  id="txtPlacaResultado"
+                  data-testid="txt-placa"
+                  >---</span
+                >
               </div>
               <div class="data-group">
                 <span class="label">Vigencia SOAT</span>
-                <span class="val-check" id="txtSoat"
-                  >12/03/2027 <span class="check">✓</span></span
-                >
+                <span class="val-check" id="txtSoat">---</span>
               </div>
             </div>
 
             <div class="data-row-two-col">
               <div class="data-group">
                 <span class="label">Inspección Técnica (CITV)</span>
-                <span class="val-check" id="txtCitv"
-                  >05/06/2027 <span class="check">✓</span></span
-                >
+                <span class="val-check" id="txtCitv">---</span>
               </div>
               <div class="data-group">
                 <span class="label">Permiso Operación</span>
-                <span class="val-check"
-                  >ACTIVO <span class="check">✓</span></span
-                >
+                <span class="val-check" id="txtPermiso">ACTIVO ✓</span>
               </div>
             </div>
 
             <div class="data-group">
               <span class="label">Modelo y Fabricación</span>
-              <span
-                class="val-primary"
-                id="txtModelo"
-                style="font-size: 13.5px; font-weight: 700; color: #334155"
-              >
-                Toyota Probox (Año: 2018 — Antigüedad: 8 años)
-              </span>
+              <span class="val-primary" id="txtModelo">---</span>
             </div>
           </div>
 
           <footer class="result-footer-note">
-            ✓ Cotejo federado con WebService SUNARP y padrón local MPCH exitoso.
-            Última sinc.: <span id="syncTime">08:34:12</span>
+            ✓ Cotejo federado con WebService SUNARP y padrón local MPCH.
+            Sincronizado:
+            <span id="syncTime">--:--:--</span>
           </footer>
         </article>
       </main>
 
-      <!-- Subsanación obligatoria HAL-UI-04 y Botones de Acción -->
       <footer class="footer-actions">
-        <!-- Microtexto explicativo obligatorio según Hallazgo HAL-UI-04 -->
-        <div class="tooltip-info-conforme" id="msgConforme" role="status">
-          <span>ℹ️</span>
-          <span
-            >Unidad habilitada sin faltas vigentes: no procede emisión de
-            sanción.</span
-          >
+        <!-- Subsanación HAL-UI-04: Microtexto explicativo obligatorio -->
+        <div
+          class="tooltip-info-conforme"
+          id="msgConforme"
+          data-testid="microtexto-hal-ui-04"
+          role="status"
+        >
+          ℹ️ Unidad habilitada sin faltas vigentes: no procede emisión de
+          sanción.
         </div>
 
         <div class="footer-buttons-row">
-          <!-- Selector Playwright #btnActa (deshabilitado de forma obligatoria) -->
           <button
             class="btn-footer btn-acta"
             id="btnActa"
+            data-testid="btn-acta"
+            style="flex: 1.4"
             disabled
+            type="button"
             title="Unidad habilitada sin faltas vigentes: no procede emisión de sanción"
           >
             GENERAR ACTA DIGITAL
           </button>
-          <button class="btn-footer btn-close" id="btnClose" type="button">
+          <button
+            class="btn-footer btn-close"
+            id="btnClose"
+            data-testid="btn-volver-consulta"
+            style="flex: 1"
+            type="button"
+          >
             VOLVER / NUEVA CONSULTA
           </button>
         </div>
       </footer>
     </div>
 
-    <script>
-      // Cargar perfil del inspector
-      const sessionData = JSON.parse(
-        sessionStorage.getItem("mpch_session") || "{}",
+    <script type="module">
+      import {
+        validarEntradaCampo,
+        evaluarSemaforoVehiculo,
+      } from "/js/domain.js";
+      import { inicializarGuardiaSesion } from "/js/session-guard.js";
+      import { consultarVehiculoConResiliencia } from "/js/offline-db.js";
+
+      inicializarGuardiaSesion([
+        "INSPECTOR_CAMPO",
+        "ESPECIALISTA_OPERATIVO",
+        "ADMIN",
+      ]);
+
+      const now = new Date();
+      document.getElementById("currentDatetime").textContent =
+        `${now.toLocaleDateString("es-PE")} | ${now.toTimeString().slice(0, 5)}`;
+      document.getElementById("syncTime").textContent = now
+        .toTimeString()
+        .slice(0, 8);
+
+      const offlineState = JSON.parse(
+        sessionStorage.getItem("mpch_offline_state") || "{}",
       );
-      if (sessionData.name) {
-        document.getElementById("userNameLabel").textContent = sessionData.name;
-        document.getElementById("userRoleLabel").textContent = sessionData.role;
+      if (offlineState.offline) {
+        document.getElementById("toastMsg").textContent =
+          offlineState.toast ||
+          "Servicio SUNARP no disponible. Consultando datos en caché local";
+        document.getElementById("toastAlerta").classList.add("show");
+        const ind = document.getElementById("indicadorRed");
+        ind.classList.add("offline-mode");
+        ind.setAttribute("aria-label", "Conectividad de red: Modo caché");
+        document.getElementById("textRed").textContent = "Modo caché";
       }
 
       const txtPlacaDni = document.getElementById("txtPlacaDni");
-      const btnClear = document.getElementById("btnClear");
       const btnBuscar = document.getElementById("btnBuscar");
-      const btnQr = document.getElementById("btnQr");
-      const btnActa = document.getElementById("btnActa");
-      const btnClose = document.getElementById("btnClose");
-      const txtTitular = document.getElementById("txtTitular");
-      const txtPlacaResultado = document.getElementById("txtPlacaResultado");
-      const txtSoat = document.getElementById("txtSoat");
-      const txtCitv = document.getElementById("txtCitv");
-      const txtModelo = document.getElementById("txtModelo");
-      const syncTime = document.getElementById("syncTime");
+      const btnClear = document.getElementById("btnClear");
 
-      // Actualizar hora de sincronización local
-      const now = new Date();
-      syncTime.textContent = now.toTimeString().split(" ")[0];
+      async function cargarDetalle() {
+        const params = new URLSearchParams(window.location.search);
+        const placaParam = params.get("placa");
+        let vehiculo = JSON.parse(
+          sessionStorage.getItem("mpch_active_vehicle") || "null",
+        );
 
-      // Cargar datos desde sessionStorage o parámetros URL
-      const activeVehicle = JSON.parse(
-        sessionStorage.getItem("mpch_active_vehicle") || "{}",
-      );
-      const params = new URLSearchParams(window.location.search);
-      const placaParam =
-        params.get("placa") || activeVehicle.placa || "V1A-309";
-
-      txtPlacaDni.value = placaParam;
-      txtPlacaResultado.textContent = placaParam;
-
-      if (activeVehicle.titular) {
-        txtTitular.textContent = activeVehicle.titular;
-        if (activeVehicle.modelo) {
-          txtModelo.textContent = `${activeVehicle.marca || ""} ${activeVehicle.modelo}`;
+        if (!vehiculo || (placaParam && vehiculo.placa !== placaParam)) {
+          const entrada = validarEntradaCampo(placaParam || "V1A-309");
+          if (entrada.valido) {
+            const res = await consultarVehiculoConResiliencia(entrada.clave);
+            if (res.ok) vehiculo = res.vehiculo;
+          }
         }
-        if (activeVehicle.soatVence) {
-          txtSoat.innerHTML = `${activeVehicle.soatVence} <span class="check">✓</span>`;
+
+        if (!vehiculo) {
+          window.location.replace("/consulta-campo");
+          return;
         }
-        if (activeVehicle.citvVence) {
-          txtCitv.innerHTML = `${activeVehicle.citvVence} <span class="check">✓</span>`;
+
+        const sem = evaluarSemaforoVehiculo(vehiculo);
+        if (sem.estado !== "conforme") {
+          window.location.replace(
+            `/resultado-infraccion?placa=${encodeURIComponent(vehiculo.placa)}&estado=${sem.estado}`,
+          );
+          return;
         }
+
+        txtPlacaDni.value = vehiculo.placa;
+        document.getElementById("txtPlacaResultado").textContent =
+          vehiculo.placa;
+        document.getElementById("txtTitular").textContent =
+          `${vehiculo.titular}${vehiculo.dni ? ` (DNI: ${vehiculo.dni})` : ""}`;
+        document.getElementById("txtSoat").textContent =
+          `${vehiculo.soatVence} ✓`;
+        document.getElementById("txtCitv").textContent =
+          `${vehiculo.citvVence} ✓`;
+        document.getElementById("txtModelo").textContent =
+          `${vehiculo.marca} ${vehiculo.modelo} (Año: ${vehiculo.anioFabricacion})`;
       }
+      cargarDetalle();
 
-      // Botón para limpiar campo
+      txtPlacaDni.addEventListener("input", (e) => {
+        e.target.value = e.target.value
+          .replace(/[^a-zA-Z0-9-]/g, "")
+          .toUpperCase();
+        btnBuscar.disabled = !validarEntradaCampo(e.target.value).valido;
+      });
+
       btnClear.addEventListener("click", () => {
         txtPlacaDni.value = "";
+        btnBuscar.disabled = true;
         txtPlacaDni.focus();
       });
 
-      // Botón Nueva Búsqueda
-      btnBuscar.addEventListener("click", () => {
-        const val = txtPlacaDni.value.trim().toUpperCase().replace("-", "");
-        if (!val) {
-          window.location.href = "index1.html";
+      btnBuscar.addEventListener("click", async () => {
+        const entrada = validarEntradaCampo(txtPlacaDni.value);
+        if (!entrada.valido) return;
+        btnBuscar.disabled = true;
+        btnBuscar.textContent = "CONSULTANDO...";
+
+        const res = await consultarVehiculoConResiliencia(entrada.clave);
+        if (!res.ok) {
+          window.location.href = "/consulta-campo";
           return;
         }
-        if (val === "XYZ789" || val === "42901844") {
-          window.location.href = "index3.html?placa=XYZ-789&estado=warning";
-        } else if (val === "JKL456" || val === "47120938") {
-          window.location.href = "index3.html?placa=JKL-456&estado=infraccion";
-        } else if (val === "ABC123") {
-          window.location.href = "index3.html?placa=ABC-123&estado=infraccion";
-        } else {
-          window.location.href = "index1.html";
-        }
+        const sem = evaluarSemaforoVehiculo(res.vehiculo);
+        sessionStorage.setItem(
+          "mpch_active_vehicle",
+          JSON.stringify({ ...res.vehiculo, semaforo: sem }),
+        );
+        sessionStorage.setItem(
+          "mpch_offline_state",
+          JSON.stringify({ offline: res.offline, toast: res.toast || "" }),
+        );
+        window.location.href =
+          sem.estado === "conforme"
+            ? `/resultado-conforme?placa=${encodeURIComponent(res.vehiculo.placa)}`
+            : `/resultado-infraccion?placa=${encodeURIComponent(res.vehiculo.placa)}&estado=${sem.estado}`;
       });
 
-      // Permitir Enter
       txtPlacaDni.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          btnBuscar.click();
-        }
+        if (e.key === "Enter" && !btnBuscar.disabled) btnBuscar.click();
       });
 
-      // Retorno
-      btnClose.addEventListener("click", () => {
-        window.location.href = "index1.html";
-      });
-
-      btnQr.addEventListener("click", () => {
-        alert("Activando escáner de cámara para nueva verificación.");
+      document.getElementById("btnClose").addEventListener("click", () => {
+        window.location.href = "/consulta-campo";
       });
     </script>
   </body>

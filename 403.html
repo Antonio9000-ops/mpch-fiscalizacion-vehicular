@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MPCH - 403 Acceso Denegado</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <main class="mobile-frame">
+      <header class="header" style="background-color: #c0392b">
+        <div class="badge-mpch">MPCH • CONTROL DE ACCESO RBAC</div>
+        <h1 class="login-title">403 — Módulo No Autorizado</h1>
+      </header>
+      <div class="content" style="justify-content: center; gap: 16px">
+        <div
+          class="alert-banner-accessible"
+          role="alert"
+          data-testid="rbac-403-banner"
+        >
+          ⛔ Su perfil de usuario actual no tiene permisos para acceder a este
+          módulo (CP-SEC-01).
+        </div>
+        <a href="/login" class="btn btn-primary" data-testid="btn-volver-login">
+          IR AL INICIO DE SESIÓN
+        </a>
+      </div>
+    </main>
+  </body>
+</html>

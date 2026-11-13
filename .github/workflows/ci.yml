@@ -1,0 +1,79 @@
+name: Pipeline SQA MPCH (Lint, Unitarias, Trivy y Playwright)
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  lint-unit-y-seguridad:
+    name: Linter, Pruebas Unitarias y Trivy SCA
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar ESLint (Análisis Estático JS)
+        run: npm run lint
+
+      - name: Ejecutar Pruebas Unitarias con Cobertura (node --test)
+        run: npm run test:unit
+
+      - name: Escaneo de Vulnerabilidades con Trivy (v0.36.0)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+
+      # Opcional: activar creando variable SONAR_ENABLED=true y secrets SONAR_TOKEN / SONAR_HOST_URL
+      - name: Análisis SonarQube (Opcional)
+        if: vars.SONAR_ENABLED == 'true'
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  e2e-playwright:
+    name: Suite E2E Móvil (Pixel 5)
+    needs: lint-unit-y-seguridad
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Instalar dependencias y navegador Chromium
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Ejecutar Playwright E2E
+        run: npm run test:e2e
+
+      - name: Subir reporte HTML de Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-playwright-mpch
+          path: playwright-report/

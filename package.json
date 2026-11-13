@@ -1,0 +1,19 @@
+{
+  "name": "mpch-fiscalizacion-vehicular",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prototipo de Control y Fiscalización Vehicular - MPCH (HTML/CSS/JS + Supabase + Vercel)",
+  "scripts": {
+    "start": "node tests/local-server.mjs",
+    "lint": "eslint js api tests",
+    "test:unit": "node --test --experimental-test-coverage tests/domain.test.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@playwright/test": "^1.65.0",
+    "eslint": "^9.37.0",
+    "globals": "^17.14.0"
+  }
+}

@@ -2,262 +2,53 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Sistema de Fiscalización Vehicular en Campo - Municipalidad Provincial de Chachapoyas"
+      content="Sistema de Fiscalización Vehicular - Municipalidad Provincial de Chachapoyas"
     />
     <meta name="theme-color" content="#1A5276" />
-    <title>MPCH - Inicio de Sesión de Inspector (CP-SEC-01)</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      body {
-        background: radial-gradient(circle at 50% 20%, #1e293b, #090d16);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 16px 8px;
-      }
-
-      .mobile-frame {
-        width: 100%;
-        max-width: 400px;
-        min-height: 780px;
-        background-color: #f8fafc;
-        border-radius: 28px;
-        overflow: hidden;
-        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 0;
-          background: #f8fafc;
-        }
-        .mobile-frame {
-          border-radius: 0;
-          min-height: 100vh;
-          box-shadow: none;
-        }
-      }
-
-      /* Azul Institucional: #1A5276 (Ratio 8.38:1 AAA frente a blanco) */
-      .login-header {
-        background-color: #1a5276;
-        padding: 36px 20px 26px;
-        color: #ffffff;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .badge-mpch {
-        background: #ffffff;
-        color: #1a5276;
-        font-weight: 900;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        display: inline-block;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      }
-
-      .login-title {
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 0.3px;
-        text-transform: uppercase;
-        line-height: 1.3;
-      }
-
-      .login-subtitle {
-        font-size: 12px;
-        color: #d4e6f1;
-      }
-
-      .login-body {
-        flex: 1;
-        padding: 24px 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 18px;
-      }
-
-      .form-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #1e293b;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-      }
-
-      .form-input {
-        width: 100%;
-        height: 52px;
-        border: 1.5px solid #cbd5e1;
-        border-radius: 10px;
-        padding: 0 16px;
-        font-size: 15px;
-        font-weight: 600;
-        color: #0f172a;
-        background: #ffffff;
-        outline: none;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
-      }
-
-      .form-input:focus {
-        border-color: #1a5276;
-        box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.25);
-      }
-
-      /* Subsanación HAL-UI-03: Fondo #FFFFFF, borde #C0392B y texto #000000 (9.80:1 AAA) */
-      .error-msg {
-        display: none;
-        background-color: #ffffff;
-        border: 2px solid #c0392b;
-        color: #000000;
-        padding: 12px 14px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        line-height: 1.4;
-        text-align: left;
-      }
-
-      .error-msg.show {
-        display: block;
-      }
-
-      .error-msg strong {
-        color: #c0392b;
-        display: block;
-        margin-bottom: 2px;
-        text-transform: uppercase;
-        font-size: 11px;
-      }
-
-      /* Botón con altura mínima ergonómica de 56px para guantes en campo */
-      .btn-login {
-        width: 100%;
-        min-height: 56px;
-        background-color: #1e8449; /* Verde Conforme */
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(30, 132, 73, 0.3);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.2s;
-      }
-
-      .btn-login:disabled {
-        background-color: #94a3b8;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-
-      .btn-login:not(:disabled):active {
-        transform: scale(0.98);
-        filter: brightness(0.92);
-      }
-
-      .credentials-demo {
-        background: #eef2f6;
-        border-radius: 8px;
-        padding: 12px;
-        font-size: 11px;
-        color: #334155;
-        line-height: 1.5;
-        margin-top: 20px;
-      }
-
-      .credentials-demo code {
-        background: #e2e8f0;
-        padding: 2px 5px;
-        border-radius: 4px;
-        color: #0f172a;
-        font-weight: 700;
-      }
-
-      .login-footer {
-        text-align: center;
-        font-size: 10.5px;
-        color: #64748b;
-        padding: 14px;
-        border-top: 1px solid #e2e8f0;
-        background-color: #f1f5f9;
-      }
-    </style>
+    <title>MPCH - Inicio de Sesión (CP-SEC-01)</title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <main class="mobile-frame">
       <header class="login-header">
         <div class="badge-mpch">MUNICIPALIDAD PROVINCIAL DE CHACHAPOYAS</div>
-        <h1 class="login-title">Sistema de Fiscalización Vehicular en Campo</h1>
+        <h1 class="login-title">
+          Sistema de Control y Fiscalización Vehicular
+        </h1>
         <p class="login-subtitle">
           Subgerencia de Transportes y Circulación Vial
         </p>
       </header>
 
       <div class="login-body">
-        <form id="formLogin" novalidate>
-          <!-- Alerta bajo regla HAL-UI-03 -->
+        <form id="formLogin" data-testid="login-form" novalidate>
           <div
             class="error-msg"
             id="loginError"
+            data-testid="login-error"
             role="alert"
             aria-live="assertive"
           >
-            <strong>⚠️ Acceso Denegado</strong>
-            Credenciales incorrectas o usuario no autorizado para fiscalización
-            en vía pública.
+            <strong style="color: #c0392b; display: block; margin-bottom: 2px">
+              ⚠️ AVISO DE SEGURIDAD
+            </strong>
+            <span id="loginErrorText">
+              Credenciales incorrectas o usuario no autorizado.
+            </span>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="txtUsuario"
-              >Usuario / Código de Inspector</label
-            >
-            <!-- Selector exigido por Playwright: #txtUsuario -->
+            <label class="form-label" for="txtUsuario">Usuario / DNI</label>
             <input
               type="text"
               id="txtUsuario"
               name="txtUsuario"
+              data-testid="input-usuario"
               class="form-input"
-              placeholder="Ej. INSP_YALTA"
+              placeholder="Ej. INSP_YALTA o DNI"
               autocomplete="username"
               autocapitalize="characters"
               required
@@ -265,14 +56,12 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="txtPassword"
-              >Contraseña de Acceso</label
-            >
-            <!-- Selector exigido por Playwright: #txtPassword -->
+            <label class="form-label" for="txtPassword">Contraseña</label>
             <input
               type="password"
               id="txtPassword"
               name="txtPassword"
+              data-testid="input-password"
               class="form-input"
               placeholder="••••••••••••"
               autocomplete="current-password"
@@ -280,74 +69,149 @@
             />
           </div>
 
-          <!-- Selector exigido por Playwright: #btnIngresar con min-height 56px -->
-          <button type="submit" class="btn-login" id="btnIngresar">
+          <button
+            type="submit"
+            class="btn-login"
+            id="btnIngresar"
+            data-testid="btn-ingresar"
+          >
             INGRESAR AL SISTEMA
           </button>
         </form>
 
-        <aside
-          class="credentials-demo"
-          aria-label="Credenciales oficiales de prueba"
+        <section
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 16px;
+          "
+          aria-label="Accesos ciudadanos públicos"
         >
-          <p><strong>Credenciales de prueba (Dataset Semilla):</strong></p>
+          <a
+            href="/inscripcion"
+            class="btn btn-outline"
+            data-testid="link-inscripcion"
+          >
+            🚕 Solicitar Inscripción de Taxi (HU-03)
+          </a>
+          <a href="/chatbot" class="btn btn-primary" data-testid="link-chatbot">
+            💬 Asistente Virtual TUPA 24/7 (HU-04)
+          </a>
+        </section>
+
+        <aside class="credentials-demo" aria-label="Usuarios semilla de prueba">
+          <p><strong>Usuarios semilla registrados en Supabase:</strong></p>
+          <p>Inspector: <code>INSP_YALTA</code> / <code>Segura123!</code></p>
           <p>
-            Usuario: <code>INSP_YALTA</code> | Clave: <code>Segura123!</code>
+            Especialista: <code>ESP_OPERATIVO</code> / <code>Esp2026!</code>
           </p>
-          <p>Perfil: <strong>Inspector de Tránsito (En Campo)</strong></p>
+          <p>
+            Transportista (DNI): <code>45892147</code> / <code>Taxi2026!</code>
+          </p>
         </aside>
       </div>
 
-      <footer class="login-footer">Seguridad v1.0 • TLS 1.3 • MPCH 2026</footer>
+      <footer class="login-footer">
+        Seguridad RBAC • Expiración 15 min • MPCH 2026
+      </footer>
     </main>
 
-    <script>
+    <script type="module">
+      import { getSupabaseClient } from "/js/supabase-client.js";
+      import { guardarSesion } from "/js/session-guard.js";
+      import { sincronizarCacheDesdeSupabase } from "/js/offline-db.js";
+
       const formLogin = document.getElementById("formLogin");
       const txtUsuario = document.getElementById("txtUsuario");
       const txtPassword = document.getElementById("txtPassword");
       const btnIngresar = document.getElementById("btnIngresar");
       const loginError = document.getElementById("loginError");
+      const loginErrorText = document.getElementById("loginErrorText");
 
-      function ejecutarAutenticacion() {
-        const user = txtUsuario.value.trim().toUpperCase();
-        const pass = txtPassword.value.trim();
-
-        // Credenciales oficiales de prueba Playwright
-        if (user === "INSP_YALTA" && pass === "Segura123!") {
-          btnIngresar.disabled = true;
-          btnIngresar.textContent = "AUTENTICANDO...";
-          loginError.classList.remove("show");
-
-          // Persistir sesión para el flujo E2E
-          sessionStorage.setItem(
-            "mpch_session",
-            JSON.stringify({
-              user: "INSP_YALTA",
-              name: "Insp. Dilmer Yalta",
-              role: "INSPECTOR_CAMPO",
-              loginTime: Date.now(),
-            }),
-          );
-
-          setTimeout(() => {
-            // Redirige a la pantalla de búsqueda de campo
-            window.location.href = "index1.html";
-          }, 300);
-        } else {
-          loginError.classList.add("show");
-          txtUsuario.setAttribute("aria-invalid", "true");
-          txtPassword.setAttribute("aria-invalid", "true");
-          txtPassword.value = "";
-          txtPassword.focus();
-        }
+      function mostrarError(mensaje) {
+        loginErrorText.textContent = mensaje;
+        loginError.classList.add("show");
       }
 
-      formLogin.addEventListener("submit", (e) => {
+      const params = new URLSearchParams(window.location.search);
+      const motivo = params.get("motivo");
+      if (motivo === "expirada") {
+        mostrarError(
+          "Su sesión expiró tras 15 minutos de inactividad (CP-SEC-01). Inicie sesión nuevamente.",
+        );
+      } else if (motivo === "requerido") {
+        mostrarError("Debe iniciar sesión para acceder al módulo solicitado.");
+      }
+
+      formLogin.addEventListener("submit", async (e) => {
         e.preventDefault();
-        ejecutarAutenticacion();
+        const user = txtUsuario.value.trim();
+        const pass = txtPassword.value;
+
+        if (!user || !pass) {
+          mostrarError("Ingrese su usuario o DNI y su contraseña.");
+          return;
+        }
+
+        btnIngresar.disabled = true;
+        btnIngresar.textContent = "AUTENTICANDO...";
+        loginError.classList.remove("show");
+
+        try {
+          const sb = await getSupabaseClient();
+          if (!sb) {
+            mostrarError(
+              "Falta configurar SUPABASE_URL y SUPABASE_ANON_KEY en .env (local) o en Vercel.",
+            );
+            btnIngresar.disabled = false;
+            btnIngresar.textContent = "INGRESAR AL SISTEMA";
+            return;
+          }
+
+          const { data, error } = await sb.rpc("autenticar_usuario", {
+            p_identificador: user,
+            p_clave: pass,
+          });
+
+          if (error || !data || !data.ok) {
+            mostrarError(
+              data?.mensaje ||
+                "Credenciales incorrectas o usuario no autorizado.",
+            );
+            txtPassword.value = "";
+            txtPassword.focus();
+            btnIngresar.disabled = false;
+            btnIngresar.textContent = "INGRESAR AL SISTEMA";
+            return;
+          }
+
+          guardarSesion({
+            token: data.token,
+            expira_en: data.expira_en,
+            loginTime: Date.now(),
+            ...data.usuario,
+          });
+
+          await sincronizarCacheDesdeSupabase();
+
+          const rol = data.usuario.rol;
+          if (rol === "TRANSPORTISTA") {
+            window.location.href = "/inscripcion";
+          } else if (rol === "ESPECIALISTA_OPERATIVO") {
+            window.location.href = "/fichas";
+          } else {
+            window.location.href = "/consulta-campo";
+          }
+        } catch {
+          mostrarError(
+            "No se pudo conectar con Supabase. Verifique su conexión.",
+          );
+          btnIngresar.disabled = false;
+          btnIngresar.textContent = "INGRESAR AL SISTEMA";
+        }
       });
 
-      // Ocultar mensaje de error al corregir la escritura
       txtUsuario.addEventListener("input", () =>
         loginError.classList.remove("show"),
       );

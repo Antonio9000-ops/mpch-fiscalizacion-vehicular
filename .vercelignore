@@ -1,0 +1,9 @@
+tests/
+.github/
+supabase/
+.env
+.env.*
+playwright.config.js
+eslint.config.js
+playwright-report/
+test-results/

@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Solicitud de Inscripción de Taxi en Línea - MPCH"
+    />
+    <meta name="theme-color" content="#1A5276" />
+    <title>MPCH - Inscripción de Taxi en Línea (HU-03)</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+      .file-box {
+        background: #ffffff;
+        border: 1.5px solid #94a3b8;
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .file-box.invalid {
+        border: 2px solid #c0392b;
+        background: #fff5f5;
+      }
+      .file-status {
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+      }
+      .file-box.invalid .file-status {
+        color: #c0392b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-frame">
+      <div
+        class="toast-alerta-conexion"
+        id="toastInscripcion"
+        role="alert"
+        aria-live="assertive"
+      >
+        <span aria-hidden="true">ℹ️</span>
+        <span id="toastInscripcionMsg"></span>
+      </div>
+
+      <header class="header">
+        <div class="header-top">
+          <div class="brand-section">
+            <div class="badge-mpch">MPCH</div>
+            <div class="brand-title">
+              Ventanilla Digital de Transporte Público
+            </div>
+          </div>
+          <div class="user-profile" id="staffBadge" style="display: none">
+            <div class="user-info">
+              <div class="user-name" id="userNameLabel">Usuario</div>
+              <div class="user-role" id="userRoleLabel">TRANSPORTISTA</div>
+            </div>
+            <div class="avatar" id="userAvatar">MP</div>
+          </div>
+        </div>
+
+        <nav
+          class="module-nav"
+          id="staffNav"
+          style="display: none"
+          aria-label="Módulos del sistema"
+        >
+          <a href="/consulta-campo" class="nav-pill" id="pillCampo">Campo</a>
+          <a href="/fichas" class="nav-pill" id="pillFichas">Fichas</a>
+          <a href="/inscripcion" class="nav-pill active">Inscripción</a>
+          <a href="/chatbot" class="nav-pill">Chatbot</a>
+        </nav>
+
+        <div class="search-section">
+          <h1 class="search-title">Inscripción y Permiso de Taxi</h1>
+          <p class="search-subtitle">
+            Cruce automático con SUNARP y expediente digital (5 PDFs ≤ 5 MB)
+          </p>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Paso previo RN-11 si accede directo sin sesión -->
+        <section
+          id="secAccesoDni"
+          class="result-card"
+          style="display: none"
+          data-testid="bloque-login-dni"
+        >
+          <h2 class="status-title" style="color: #1a5276">
+            1. Identificación del Transportista (RN-11)
+          </h2>
+          <p class="result-footer-note" style="border: none; padding: 0">
+            Inicie sesión con su DNI validado para registrar una nueva solicitud
+            (Ej. semilla: <code>45892147</code> / <code>Taxi2026!</code>).
+          </p>
+          <div id="dniAuthError" class="error-msg" role="alert"></div>
+          <div class="form-group">
+            <label class="form-label" for="txtLoginDni">DNI (8 dígitos)</label>
+            <input
+              type="text"
+              id="txtLoginDni"
+              maxlength="8"
+              class="form-input"
+              placeholder="45892147"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="txtLoginPass">Contraseña</label>
+            <input
+              type="password"
+              id="txtLoginPass"
+              class="form-input"
+              placeholder="••••••••"
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn-login"
+            id="btnValidarDniLogin"
+            data-testid="btn-login-dni"
+          >
+            VALIDAR IDENTIDAD Y CONTINUAR
+          </button>
+        </section>
+
+        <!-- Formulario principal HU-03 -->
+        <form
+          id="formInscripcion"
+          style="display: none"
+          novalidate
+          data-testid="form-inscripcion"
+        >
+          <div
+            id="inscripcionAlerta"
+            class="error-msg"
+            role="alert"
+            data-testid="alerta-inscripcion"
+          ></div>
+          <div
+            id="inscripcionExito"
+            class="tooltip-info-conforme"
+            style="display: none; text-align: left"
+            role="status"
+            data-testid="exito-inscripcion"
+          ></div>
+
+          <div class="summary-card" style="margin-bottom: 14px">
+            <div class="summary-row">
+              <span class="summary-label">Solicitante (DNI)</span>
+              <span class="summary-value" id="lblSolicitanteInfo">---</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="txtEmailSol"
+              >Correo Electrónico de Notificación</label
+            >
+            <input
+              type="email"
+              id="txtEmailSol"
+              data-testid="input-email"
+              class="form-input"
+              placeholder="correo@ejemplo.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="txtPlacaSol"
+              >Placa de Rodaje (Ej. P2C-554, ABC-123, T1A-999)</label
+            >
+            <input
+              type="text"
+              id="txtPlacaSol"
+              data-testid="input-placa-taxi"
+              class="form-input"
+              maxlength="7"
+              placeholder="P2C-554"
+              style="text-transform: uppercase"
+              required
+            />
+          </div>
+
+          <div class="data-row-two-col">
+            <div class="form-group">
+              <label class="form-label" for="txtColorSol"
+                >Color Declarado</label
+              >
+              <input
+                type="text"
+                id="txtColorSol"
+                data-testid="input-color"
+                class="form-input"
+                placeholder="Ej. Azul"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="txtAnioSol">Año Fabricación</label>
+              <input
+                type="number"
+                id="txtAnioSol"
+                data-testid="input-anio"
+                class="form-input"
+                placeholder="2020"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="txtMotorSol">Número de Motor</label>
+            <input
+              type="text"
+              id="txtMotorSol"
+              data-testid="input-motor"
+              class="form-input"
+              placeholder="Ej. 1NZ-1234"
+              style="text-transform: uppercase"
+              required
+            />
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="btnAutocompletarSunarp"
+            data-testid="btn-consultar-sunarp-taxi"
+            style="width: 100%; margin-bottom: 14px"
+          >
+            🔍 VALIDAR DATOS CONTRA SUNARP
+          </button>
+
+          <div
+            id="sunarpPreview"
+            style="display: none; margin-bottom: 14px"
+            class="tooltip-info-conforme"
+          ></div>
+
+          <h2 class="content-title" style="margin-bottom: 8px">
+            EXPEDIENTE DIGITAL OBLIGATORIO (5 ARCHIVOS .PDF ≤ 5 MB)
+          </h2>
+
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              margin-bottom: 14px;
+            "
+          >
+            <div class="file-box" id="box-pdfDni">
+              <label class="form-label" for="pdfDni"
+                >1. DNI Vigente (.PDF)</label
+              >
+              <input
+                type="file"
+                id="pdfDni"
+                accept=".pdf,application/pdf"
+                data-doc="DNI"
+              />
+              <span class="file-status" id="status-pdfDni">Pendiente</span>
+            </div>
+            <div class="file-box" id="box-pdfBrevete">
+              <label class="form-label" for="pdfBrevete"
+                >2. Licencia de Conducir / Brevete (.PDF)</label
+              >
+              <input
+                type="file"
+                id="pdfBrevete"
+                accept=".pdf,application/pdf"
+                data-doc="Brevete"
+              />
+              <span class="file-status" id="status-pdfBrevete">Pendiente</span>
+            </div>
+            <div class="file-box" id="box-pdfSoat">
+              <label class="form-label" for="pdfSoat"
+                >3. SOAT Vigente (.PDF)</label
+              >
+              <input
+                type="file"
+                id="pdfSoat"
+                accept=".pdf,application/pdf"
+                data-doc="SOAT"
+              />
+              <span class="file-status" id="status-pdfSoat">Pendiente</span>
+            </div>
+            <div class="file-box" id="box-pdfCitv">
+              <label class="form-label" for="pdfCitv"
+                >4. Inspección Técnica CITV (.PDF)</label
+              >
+              <input
+                type="file"
+                id="pdfCitv"
+                accept=".pdf,application/pdf"
+                data-doc="Inspección Técnica"
+              />
+              <span class="file-status" id="status-pdfCitv">Pendiente</span>
+            </div>
+            <div class="file-box" id="box-pdfDj">
+              <label class="form-label" for="pdfDj"
+                >5. Declaración Jurada (.PDF)</label
+              >
+              <input
+                type="file"
+                id="pdfDj"
+                accept=".pdf,application/pdf"
+                data-doc="Declaración Jurada"
+              />
+              <span class="file-status" id="status-pdfDj">Pendiente</span>
+            </div>
+          </div>
+
+          <label
+            class="check-item"
+            style="margin-bottom: 14px"
+            for="chkSimularFalloCorreo"
+          >
+            <input
+              type="checkbox"
+              id="chkSimularFalloCorreo"
+              data-testid="chk-simular-smtp-fallo"
+            />
+            <span>Simular caída del servidor de correo SMTP (CP-HU03-08)</span>
+          </label>
+
+          <button
+            type="submit"
+            class="btn btn-success"
+            id="btnEnviarSolicitud"
+            data-testid="btn-enviar-solicitud"
+            style="width: 100%"
+          >
+            ENVIAR SOLICITUD DE INSCRIPCIÓN
+          </button>
+        </form>
+
+        <!-- Consulta de estado de expediente (derivación desde Chatbot CP-HU04-03) -->
+        <section
+          id="consulta-expediente"
+          class="result-card"
+          style="margin-top: 8px"
+          data-testid="consulta-expediente"
+        >
+          <h2 class="status-title" style="color: #1a5276">
+            Consulta Segura de Expediente
+          </h2>
+          <p class="result-footer-note" style="border: none; padding: 0">
+            Verifique el estado de su trámite ingresando su DNI y número de
+            expediente o placa.
+          </p>
+          <div class="data-row-two-col">
+            <input
+              type="text"
+              id="txtBuscarExpDni"
+              class="form-input"
+              maxlength="8"
+              placeholder="DNI (8 dígitos)"
+            />
+            <input
+              type="text"
+              id="txtBuscarExpCodigo"
+              class="form-input"
+              placeholder="EXP-... o Placa"
+              style="text-transform: uppercase"
+            />
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="btnBuscarExpediente"
+            data-testid="btn-buscar-expediente"
+          >
+            CONSULTAR ESTADO
+          </button>
+          <div id="resultadoBusquedaExp"></div>
+        </section>
+      </main>
+
+      <footer class="footer-actions">
+        <a href="/chatbot" class="btn-action btn-outline">💬 ASISTENTE TUPA</a>
+        <a href="/login" class="btn-action btn-secondary">VOLVER AL INICIO</a>
+      </footer>
+    </div>
+
+    <script type="module">
+      import {
+        validarPlaca,
+        validarAntiguedadTaxi,
+        validarCruceSunarpTaxi,
+        validarArchivoPdf,
+      } from "/js/domain.js";
+      import {
+        obtenerSesion,
+        guardarSesion,
+        inicializarGuardiaSesion,
+      } from "/js/session-guard.js";
+      import { getSupabaseClient } from "/js/supabase-client.js";
+
+      const formInscripcion = document.getElementById("formInscripcion");
+      const secAccesoDni = document.getElementById("secAccesoDni");
+      const inscripcionAlerta = document.getElementById("inscripcionAlerta");
+      const inscripcionExito = document.getElementById("inscripcionExito");
+
+      let sesionActual = obtenerSesion();
+
+      function habilitarFormularioConSesion(sesion) {
+        sesionActual = sesion;
+        secAccesoDni.style.display = "none";
+        formInscripcion.style.display = "block";
+        document.getElementById("staffBadge").style.display = "flex";
+        document.getElementById("lblSolicitanteInfo").textContent =
+          `${sesion.nombre_completo} (DNI: ${sesion.dni})`;
+        document.getElementById("txtEmailSol").value =
+          sesion.email || "transportista@ejemplo.com";
+
+        if (sesion.rol !== "TRANSPORTISTA") {
+          document.getElementById("staffNav").style.display = "flex";
+        }
+        inicializarGuardiaSesion([
+          "TRANSPORTISTA",
+          "INSPECTOR_CAMPO",
+          "ESPECIALISTA_OPERATIVO",
+          "ADMIN",
+        ]);
+      }
+
+      if (sesionActual) {
+        habilitarFormularioConSesion(sesionActual);
+      } else {
+        secAccesoDni.style.display = "flex";
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("placa")) {
+        document.getElementById("txtPlacaSol").value = params.get("placa");
+      }
+
+      // Login inline por DNI para ciudadanos (RN-11)
+      document
+        .getElementById("btnValidarDniLogin")
+        .addEventListener("click", async () => {
+          const dni = document.getElementById("txtLoginDni").value.trim();
+          const pass = document.getElementById("txtLoginPass").value;
+          const errBox = document.getElementById("dniAuthError");
+          errBox.classList.remove("show");
+
+          const sb = await getSupabaseClient();
+          if (!sb) {
+            errBox.textContent = "Configure Supabase en js/supabase-config.js.";
+            errBox.classList.add("show");
+            return;
+          }
+          const { data, error } = await sb.rpc("autenticar_usuario", {
+            p_identificador: dni,
+            p_clave: pass,
+          });
+          if (error || !data || !data.ok) {
+            errBox.textContent =
+              data?.mensaje || "DNI o contraseña incorrectos.";
+            errBox.classList.add("show");
+            return;
+          }
+          const ses = {
+            token: data.token,
+            expira_en: data.expira_en,
+            loginTime: Date.now(),
+            ...data.usuario,
+          };
+          guardarSesion(ses);
+          habilitarFormularioConSesion(ses);
+        });
+
+      // Validación inmediata de archivos PDF (RN-14 / CP-HU03-07)
+      const FILE_IDS = ["pdfDni", "pdfBrevete", "pdfSoat", "pdfCitv", "pdfDj"];
+      FILE_IDS.forEach((id) => {
+        const input = document.getElementById(id);
+        const box = document.getElementById(`box-${id}`);
+        const status = document.getElementById(`status-${id}`);
+        input.addEventListener("change", () => {
+          const archivo = input.files[0];
+          const res = validarArchivoPdf(archivo);
+          if (!res.valido) {
+            box.classList.add("invalid");
+            status.textContent = `✕ ${res.error}`;
+          } else {
+            box.classList.remove("invalid");
+            const kb = (archivo.size / 1024).toFixed(1);
+            status.textContent = `✓ ${archivo.name} (${kb} KB)`;
+          }
+        });
+      });
+
+      let datosSunarpCache = null;
+
+      async function consultarSunarpPorPlaca(placaInput) {
+        const p = validarPlaca(placaInput);
+        if (!p.valida) return null;
+        const resp = await fetch(
+          `/api/v1/externo/sunarp/${encodeURIComponent(p.normalizada)}`,
+        );
+        if (!resp.ok) return null;
+        return await resp.json();
+      }
+
+      document
+        .getElementById("btnAutocompletarSunarp")
+        .addEventListener("click", async () => {
+          const placaRaw = document.getElementById("txtPlacaSol").value;
+          const p = validarPlaca(placaRaw);
+          const preview = document.getElementById("sunarpPreview");
+          inscripcionAlerta.classList.remove("show");
+
+          if (!p.valida) {
+            inscripcionAlerta.textContent =
+              "Ingrese una placa válida de 6 caracteres (ej. P2C-554).";
+            inscripcionAlerta.classList.add("show");
+            return;
+          }
+
+          const data = await consultarSunarpPorPlaca(p.normalizada);
+          if (!data || !data.ok) {
+            inscripcionAlerta.textContent =
+              "No se encontró información registral en SUNARP para esa placa.";
+            inscripcionAlerta.classList.add("show");
+            return;
+          }
+
+          datosSunarpCache = data;
+          preview.style.display = "block";
+          preview.textContent = `✓ SUNARP: ${data.marca} ${data.modelo} (${data.anioFabricacion}) • Color: ${data.color} • Motor: ${data.numeroMotor}`;
+
+          if (!document.getElementById("txtAnioSol").value) {
+            document.getElementById("txtAnioSol").value = data.anioFabricacion;
+          }
+          if (!document.getElementById("txtColorSol").value) {
+            document.getElementById("txtColorSol").value = data.color;
+          }
+          if (!document.getElementById("txtMotorSol").value) {
+            document.getElementById("txtMotorSol").value = data.numeroMotor;
+          }
+        });
+
+      formInscripcion.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        inscripcionAlerta.classList.remove("show");
+        inscripcionExito.style.display = "none";
+
+        const placaVal = validarPlaca(
+          document.getElementById("txtPlacaSol").value,
+        );
+        const colorDec = document.getElementById("txtColorSol").value.trim();
+        const motorDec = document
+          .getElementById("txtMotorSol")
+          .value.trim()
+          .toUpperCase();
+        const anioDec = Number(document.getElementById("txtAnioSol").value);
+        const emailSol = document.getElementById("txtEmailSol").value.trim();
+
+        if (
+          !placaVal.valida ||
+          !colorDec ||
+          !motorDec ||
+          !anioDec ||
+          !emailSol
+        ) {
+          inscripcionAlerta.textContent =
+            "Complete todos los campos obligatorios del vehículo y correo.";
+          inscripcionAlerta.classList.add("show");
+          return;
+        }
+
+        // 1. Validar antigüedad ≤ 15 años (RN-12 / CP-HU03-05)
+        const ant = validarAntiguedadTaxi(anioDec);
+        if (!ant.valido) {
+          inscripcionAlerta.textContent = `⛔ Excede la antigüedad máxima permitida por el TUPA (${ant.maxPermitido} años). Antigüedad del vehículo: ${ant.antiguedad} años.`;
+          inscripcionAlerta.classList.add("show");
+          return;
+        }
+
+        // 2. Validar 5 archivos PDF ≤ 5 MB (RN-14 / CP-HU03-03 y CP-HU03-07)
+        const faltantes = [];
+        const archivosValidos = [];
+        FILE_IDS.forEach((id) => {
+          const input = document.getElementById(id);
+          const box = document.getElementById(`box-${id}`);
+          const file = input.files[0];
+          const check = validarArchivoPdf(file);
+          if (!check.valido) {
+            box.classList.add("invalid");
+            faltantes.push(`${input.dataset.doc}: ${check.error}`);
+          } else {
+            box.classList.remove("invalid");
+            archivosValidos.push({ tipo: input.dataset.doc, file });
+          }
+        });
+
+        if (faltantes.length > 0) {
+          inscripcionAlerta.innerHTML = `⛔ Documento(s) obligatorio(s) faltante(s) o inválidos:<br>• ${faltantes.join("<br>• ")}`;
+          inscripcionAlerta.classList.add("show");
+          return;
+        }
+
+        const btnEnviar = document.getElementById("btnEnviarSolicitud");
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = "PROCESANDO SOLICITUD...";
+
+        try {
+          // 3. Cruce en tiempo real con SUNARP (RN-13 / CP-HU03-02 y CP-HU03-06)
+          const sunarp =
+            datosSunarpCache?.placaNormalizada === placaVal.normalizada
+              ? datosSunarpCache
+              : await consultarSunarpPorPlaca(placaVal.normalizada);
+
+          if (!sunarp || !sunarp.ok) {
+            throw new Error(
+              "No se pudo validar la placa contra el WebService SUNARP.",
+            );
+          }
+
+          const cruce = validarCruceSunarpTaxi(
+            { color: colorDec, motor: motorDec },
+            sunarp,
+          );
+          if (!cruce.valido) {
+            throw new Error(`⛔ ${cruce.errores.join(" ")}`);
+          }
+
+          const sb = await getSupabaseClient();
+          if (!sb) throw new Error("Supabase no configurado.");
+
+          // 4. Prevención de duplicidad en trámite (CP-HU03-04)
+          const { data: duplicado } = await sb
+            .from("solicitudes_taxi")
+            .select("numero_expediente")
+            .eq("placa_normalizada", placaVal.normalizada)
+            .eq("estado", "EN_REVISION")
+            .maybeSingle();
+
+          if (duplicado) {
+            throw new Error(
+              `⛔ La placa ${placaVal.formateada} ya cuenta con solicitud en trámite (${duplicado.numero_expediente}).`,
+            );
+          }
+
+          // 5. Subir los 5 PDFs al bucket privado expedientes-taxi en Supabase Storage
+          const docsMeta = [];
+          for (const item of archivosValidos) {
+            const ruta = `${placaVal.normalizada}/${Date.now()}_${item.tipo.replace(/\s+/g, "_")}.pdf`;
+            const { error: upErr } = await sb.storage
+              .from("expedientes-taxi")
+              .upload(ruta, item.file, { contentType: "application/pdf" });
+            if (upErr) {
+              throw new Error(
+                `Error al subir ${item.tipo} a Storage: ${upErr.message}`,
+              );
+            }
+            docsMeta.push({ tipo: item.tipo, ruta, bytes: item.file.size });
+          }
+
+          // 6. Registrar expediente con tolerancia ante caída SMTP (CP-HU03-08)
+          const simularFalloSmtp = document.getElementById(
+            "chkSimularFalloCorreo",
+          ).checked;
+          const estadoCorreo = simularFalloSmtp
+            ? "PENDIENTE_REENVIO"
+            : "ENVIADO";
+
+          const { data: expData, error: insErr } = await sb
+            .from("solicitudes_taxi")
+            .insert({
+              solicitante_dni: sesionActual.dni,
+              solicitante_nombre: sesionActual.nombre_completo,
+              solicitante_email: emailSol,
+              placa_normalizada: placaVal.normalizada,
+              placa_mostrada: placaVal.formateada,
+              color_declarado: colorDec,
+              motor_declarado: motorDec,
+              anio_fabricacion: anioDec,
+              documentos_pdf: docsMeta,
+              estado: "EN_REVISION",
+              estado_correo: estadoCorreo,
+            })
+            .select()
+            .single();
+
+          if (insErr) throw new Error(insErr.message);
+
+          await sb.from("notificaciones_cola").insert({
+            expediente_codigo: expData.numero_expediente,
+            destinatario_email: emailSol,
+            asunto: `Confirmación de Solicitud ${expData.numero_expediente}`,
+            cuerpo: `Su solicitud de inscripción de taxi para la placa ${expData.placa_mostrada} ingresó en estado En revisión.`,
+            estado: simularFalloSmtp ? "PENDIENTE" : "ENVIADO",
+            intentos: simularFalloSmtp ? 0 : 1,
+          });
+
+          inscripcionExito.style.display = "block";
+          if (simularFalloSmtp) {
+            inscripcionExito.className = "tooltip-info-warning";
+            inscripcionExito.innerHTML = `⚠️ <strong>Solicitud registrada: ${expData.numero_expediente}</strong> (Estado: En revisión). El servidor de correo no respondió; la notificación quedó en cola pendiente de reintento (CP-HU03-08).`;
+          } else {
+            inscripcionExito.className = "tooltip-info-conforme";
+            inscripcionExito.innerHTML = `✓ <strong>Solicitud registrada exitosamente: ${expData.numero_expediente}</strong> (Estado: En revisión). Acuse enviado a ${emailSol}.`;
+          }
+          formInscripcion.reset();
+        } catch (err) {
+          inscripcionAlerta.textContent = err.message;
+          inscripcionAlerta.classList.add("show");
+        } finally {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = "ENVIAR SOLICITUD DE INSCRIPCIÓN";
+        }
+      });
+
+      // Consulta de expediente derivada desde Chatbot (CP-HU04-03)
+      document
+        .getElementById("btnBuscarExpediente")
+        .addEventListener("click", async () => {
+          const dni = document.getElementById("txtBuscarExpDni").value.trim();
+          const code = document
+            .getElementById("txtBuscarExpCodigo")
+            .value.trim()
+            .toUpperCase();
+          const out = document.getElementById("resultadoBusquedaExp");
+
+          if (!/^\d{8}$/.test(dni) || !code) {
+            out.innerHTML = `<div class="alert-banner-accessible">Ingrese un DNI de 8 dígitos y su número de expediente o placa.</div>`;
+            return;
+          }
+
+          const sb = await getSupabaseClient();
+          if (!sb) return;
+          const normCode = code.replace(/[^A-Z0-9]/g, "");
+
+          const { data } = await sb
+            .from("solicitudes_taxi")
+            .select("*")
+            .eq("solicitante_dni", dni)
+            .or(`numero_expediente.eq.${code},placa_normalizada.eq.${normCode}`)
+            .order("creado_en", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (!data) {
+            out.innerHTML = `<div class="alert-banner-accessible">No se encontró expediente asociado al DNI ${dni} y código ${code}.</div>`;
+            return;
+          }
+
+          out.innerHTML = `
+          <div class="tooltip-info-conforme" style="text-align: left">
+            <strong>Expediente:</strong> ${data.numero_expediente}<br/>
+            <strong>Placa:</strong> ${data.placa_mostrada} • <strong>Estado:</strong> ${data.estado}<br/>
+            <strong>Notificación:</strong> ${data.estado_correo}
+          </div>
+        `;
+        });
+    </script>
+  </body>
+</html>

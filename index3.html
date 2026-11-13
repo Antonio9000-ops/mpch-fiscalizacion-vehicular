@@ -2,500 +2,29 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Consulta Vehicular No Conforme - Subgerencia de Transportes MPCH"
+      content="Consulta Vehicular No Conforme o Preventiva - Subgerencia de Transportes MPCH"
     />
     <meta name="theme-color" content="#1A5276" />
-    <title>MPCH - Consulta Vehicular Inhabilitado (CP-HU01-03)</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      body {
-        background: radial-gradient(circle at 50% 20%, #1e293b, #090d16);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 16px 8px;
-      }
-
-      .mobile-frame {
-        width: 100%;
-        max-width: 400px;
-        min-height: 780px;
-        background-color: #f8fafc;
-        border-radius: 28px;
-        overflow: hidden;
-        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 0;
-          background: #f8fafc;
-        }
-        .mobile-frame {
-          border-radius: 0;
-          min-height: 100vh;
-          box-shadow: none;
-        }
-      }
-
-      .header {
-        background-color: #1a5276;
-        padding: 20px 18px 22px;
-        color: #ffffff;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-
-      .brand-section {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        max-width: 65%;
-      }
-
-      .badge-mpch {
-        background: #ffffff;
-        color: #1a5276;
-        font-weight: 900;
-        font-size: 11px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .brand-title {
-        font-size: 11px;
-        font-weight: 800;
-        line-height: 1.25;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-
-      .user-profile {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .user-info {
-        text-align: right;
-      }
-
-      .user-name {
-        font-size: 13px;
-        font-weight: 700;
-        line-height: 1.2;
-      }
-
-      .user-role {
-        font-size: 10.5px;
-        color: #d4e6f1;
-      }
-
-      .avatar {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 2px solid #ffffff;
-        background: #154360;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 12.5px;
-        color: #ffffff;
-      }
-
-      .status-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 11.5px;
-        color: #ebf5fb;
-        padding-top: 6px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-
-      .indicador-red {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-weight: 700;
-        font-size: 11.5px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.15);
-      }
-
-      .indicador-red .status-dot {
-        width: 8px;
-        height: 8px;
-        background-color: #2ecc71;
-        border-radius: 50%;
-        box-shadow: 0 0 6px #2ecc71;
-        display: inline-block;
-      }
-
-      .search-section {
-        text-align: center;
-        padding-top: 4px;
-      }
-
-      .search-title {
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
-        margin-bottom: 3px;
-      }
-
-      .search-subtitle {
-        font-size: 12px;
-        color: #d4e6f1;
-        margin-bottom: 12px;
-      }
-
-      .search-input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-      }
-
-      .search-input {
-        width: 100%;
-        height: 52px;
-        border: 2px solid #c0392b;
-        border-radius: 10px;
-        padding: 0 44px 0 16px;
-        font-size: 16px;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: #0f172a;
-        background-color: #ffffff;
-        outline: none;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-        text-align: center;
-      }
-
-      .btn-clear {
-        position: absolute;
-        right: 12px;
-        background: transparent;
-        border: none;
-        color: #64748b;
-        font-size: 18px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .btn {
-        flex: 1;
-        min-height: 56px;
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        font-size: 13.5px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      }
-
-      .btn:active {
-        transform: scale(0.98);
-        filter: brightness(0.95);
-      }
-
-      .btn-search {
-        background-color: #1e8449;
-      }
-
-      .btn-qr {
-        background-color: #2980b9;
-      }
-
-      .content {
-        flex: 1;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .result-card.card-result.card-resultado.status-infraccion {
-        background: #ffffff;
-        border-radius: 14px;
-        padding: 18px 16px;
-        box-shadow: 0 4px 16px rgba(192, 57, 43, 0.12);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 13px;
-        border: 2px solid #c0392b;
-      }
-
-      .result-card::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 7px;
-        background: #c0392b;
-        border-radius: 12px 0 0 12px;
-      }
-
-      .result-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #e2e8f0;
-      }
-
-      .status-icon-circle {
-        width: 44px;
-        height: 44px;
-        background-color: #ffffff;
-        color: #c0392b;
-        border: 2px solid #c0392b;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        font-weight: 900;
-        flex-shrink: 0;
-      }
-
-      .status-title-box {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .status-title {
-        font-size: 15px;
-        font-weight: 900;
-        color: #c0392b;
-        letter-spacing: 0.3px;
-        line-height: 1.2;
-      }
-
-      .status-subtitle {
-        font-size: 11.5px;
-        color: #475569;
-        margin-top: 2px;
-        font-weight: 600;
-      }
-
-      .alert-banner-accessible {
-        background-color: #ffffff;
-        border: 2px solid #c0392b;
-        border-left: 6px solid #c0392b;
-        border-radius: 8px;
-        padding: 10px 12px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #000000;
-        font-size: 12.5px;
-        font-weight: 700;
-        line-height: 1.35;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      }
-
-      .alert-banner-accessible .alert-icon {
-        font-size: 20px;
-        color: #c0392b;
-        flex-shrink: 0;
-      }
-
-      .result-body {
-        display: flex;
-        flex-direction: column;
-        gap: 11px;
-      }
-
-      .data-group {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .data-row-two-col {
-        display: grid;
-        grid-template-columns: 1fr 1.35fr;
-        gap: 12px;
-      }
-
-      .label {
-        font-size: 11px;
-        color: #64748b;
-        margin-bottom: 2px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-      }
-
-      .val-primary {
-        font-size: 14.5px;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .val-danger {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #c0392b;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .val-danger span.cross {
-        font-weight: 900;
-        font-size: 13px;
-      }
-
-      .val-check {
-        font-size: 13.5px;
-        font-weight: 800;
-        color: #1e8449;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .result-footer-note {
-        font-size: 11px;
-        color: #64748b;
-        line-height: 1.4;
-        padding-top: 10px;
-        border-top: 1px solid #e2e8f0;
-      }
-
-      .footer-actions {
-        padding: 14px 16px 18px;
-        background: #ffffff;
-        border-top: 1px solid #e2e8f0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .footer-buttons-row {
-        display: flex;
-        gap: 10px;
-      }
-
-      .btn-footer {
-        min-height: 56px;
-        border: none;
-        border-radius: 10px;
-        color: #ffffff;
-        font-weight: 800;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-transform: uppercase;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-        transition: all 0.2s;
-      }
-
-      .btn-acta-enabled {
-        background-color: #c0392b;
-        flex: 1.4;
-        box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
-        border: 1px solid #962d22;
-      }
-
-      .btn-acta-already-emitted {
-        background-color: #1a5276; /* Cambia a azul para ver el acta existente */
-        flex: 1.4;
-        border: 1px solid #154360;
-      }
-
-      .btn-close {
-        background-color: #334155;
-        flex: 1;
-      }
-
-      .tooltip-info-warning {
-        display: none;
-        font-size: 11px;
-        font-weight: 800;
-        color: #000000;
-        background-color: #f39c12;
-        border: 1.5px solid #d68910;
-        padding: 8px 12px;
-        border-radius: 8px;
-        text-align: center;
-        line-height: 1.35;
-      }
-
-      /* Banner informativo cuando el vehículo ya cuenta con acta */
-      .banner-already-signed {
-        display: none;
-        background-color: #e8f8f0;
-        border: 1.5px solid #1e8449;
-        color: #000000;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 11px;
-        font-weight: 700;
-        text-align: center;
-        line-height: 1.35;
-      }
-    </style>
+    <title>MPCH - Resultado de Fiscalización (CP-HU01-02 / 03)</title>
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
     <div class="mobile-frame">
+      <div
+        class="toast-alerta-conexion"
+        id="toastAlerta"
+        role="alert"
+        aria-live="assertive"
+      >
+        <span aria-hidden="true">⚠️</span>
+        <span id="toastMsg"
+          >Servicio SUNARP no disponible. Consultando datos en caché local</span
+        >
+      </div>
+
       <header class="header">
         <div class="header-top">
           <div class="brand-section">
@@ -506,23 +35,31 @@
           </div>
           <div class="user-profile">
             <div class="user-info">
-              <div class="user-name" id="userNameLabel">Insp. Dilmer Yalta</div>
+              <div class="user-name" id="userNameLabel">Inspector</div>
               <div class="user-role" id="userRoleLabel">INSPECTOR_CAMPO</div>
             </div>
-            <div class="avatar" id="userAvatar">DY</div>
+            <div class="avatar" id="userAvatar">MP</div>
           </div>
         </div>
 
+        <nav class="module-nav" aria-label="Módulos del sistema">
+          <a href="/consulta-campo" class="nav-pill active">Campo</a>
+          <a href="/fichas" class="nav-pill">Fichas</a>
+          <a href="/inscripcion" class="nav-pill">Inscripción</a>
+          <a href="/chatbot" class="nav-pill">Chatbot</a>
+        </nav>
+
         <div class="status-row">
-          <span>17/10/2026 | 08:35</span>
+          <span id="currentDatetime">--/--/---- | --:--</span>
           <div
             class="indicador-red"
             id="indicadorRed"
+            data-testid="indicador-red"
             role="status"
             aria-label="Conectividad de red: En línea"
           >
-            <span class="status-dot"></span>
-            <span>En línea</span>
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="textRed">En línea</span>
           </div>
         </div>
 
@@ -536,329 +73,399 @@
             <input
               type="text"
               class="search-input"
-              value="JKL-456"
               id="txtPlacaDni"
               name="txtPlacaDni"
+              data-testid="input-placa-dni"
               maxlength="8"
-              placeholder="PLACA O DNI"
+              placeholder="PLACA (6 CAR.) O DNI (8 DÍG.)"
               aria-label="Placa de rodaje consultada"
             />
             <button
               class="btn-clear"
               id="btnClear"
+              data-testid="btn-clear"
               type="button"
-              title="Limpiar y volver a buscar"
+              aria-label="Limpiar campo"
+              title="Limpiar"
             >
               ✕
             </button>
           </div>
 
           <div class="action-buttons">
-            <button class="btn btn-search" id="btnBuscar" type="button">
-              <span>NUEVA BÚSQUEDA</span>
+            <button
+              class="btn btn-search"
+              id="btnBuscar"
+              data-testid="btn-buscar"
+              type="button"
+            >
+              <span>BUSCAR</span>
             </button>
-            <button class="btn btn-qr" id="btnQr" type="button">
-              <span>📷 QR</span>
-            </button>
+            <a href="/consulta-campo" class="btn btn-qr">
+              <span>📷 QR / INICIO</span>
+            </a>
           </div>
         </div>
       </header>
 
       <main class="content">
         <article
-          class="result-card card-result card-resultado status-infraccion"
+          class="result-card card-result card-resultado"
           id="cardResultado"
+          data-testid="card-resultado-infraccion"
         >
           <div class="result-header">
-            <div
-              class="status-icon-circle"
-              aria-label="Infracción detectada"
-              id="statusIcon"
-            >
-              ✕
-            </div>
-            <div class="status-title-box">
-              <h2 class="status-title" id="statusTitle">
-                INHABILITADO / VENCIDO
-              </h2>
+            <div class="status-icon-circle" id="statusIcon">⏳</div>
+            <div>
+              <h2 class="status-title" id="statusTitle">Cargando...</h2>
               <p class="status-subtitle" id="statusSubtitle">
-                Infracción al Reglamento Nacional de Tránsito
+                Verificando estado normativo
               </p>
             </div>
           </div>
 
-          <div class="alert-banner-accessible" id="alertBanner" role="alert">
-            <span class="alert-icon" id="bannerIcon">⛔</span>
-            <span id="bannerText"
-              >SOAT vencido el 30/09/2026 (12 días de mora) — Infracción Cód.
-              M.1</span
-            >
+          <div
+            class="alert-banner-accessible"
+            id="alertBanner"
+            role="alert"
+            data-testid="banner-alerta"
+          >
+            <span id="bannerText">Procesando detalle de verificación...</span>
           </div>
 
           <div class="result-body">
             <div class="data-group">
               <span class="label">Titular Registral (SUNARP)</span>
-              <span class="val-primary" id="txtTitular"
-                >Ana Vargas Pinedo (DNI: 47120938)</span
-              >
+              <span class="val-primary" id="txtTitular">---</span>
             </div>
 
             <div class="data-row-two-col">
               <div class="data-group">
                 <span class="label">Placa de Rodaje</span>
-                <span class="val-primary" id="txtPlacaResultado">JKL-456</span>
+                <span class="val-primary" id="txtPlacaResultado">---</span>
               </div>
               <div class="data-group">
                 <span class="label">Vigencia SOAT</span>
-                <span class="val-danger" id="valSoat"
-                  >30/09/2026 <span class="cross">✕</span></span
-                >
+                <span class="val-primary" id="valSoat">---</span>
               </div>
             </div>
 
             <div class="data-row-two-col">
               <div class="data-group">
                 <span class="label">Inspección Técnica (CITV)</span>
-                <span class="val-check" id="valCitv"
-                  >20/12/2026 <span class="check">✓</span></span
-                >
+                <span class="val-primary" id="valCitv">---</span>
               </div>
               <div class="data-group">
-                <span class="label">Permiso de Operación</span>
-                <span class="val-check" id="valPermiso"
-                  >N° 0321-2026 <span class="check">✓</span></span
-                >
+                <span class="label">Color / Motor</span>
+                <span class="val-primary" id="valColor">---</span>
               </div>
             </div>
 
             <div class="data-group">
-              <span class="label">Modelo del Vehículo</span>
-              <span
-                class="val-primary"
-                id="txtModelo"
-                style="font-size: 13.5px; font-weight: 700; color: #334155"
-              >
-                Hyundai Elantra (Año: 2015)
-              </span>
+              <span class="label">Modelo y Año</span>
+              <span class="val-primary" id="txtModelo">---</span>
             </div>
           </div>
 
           <footer class="result-footer-note" id="footerNote">
-            ⚠️ Cruce en tiempo real con WebService SUNARP. Se requiere emisión
-            inmediata de Acta de Fiscalización.
+            Cruce en tiempo real con WebService SUNARP y padrón local MPCH.
           </footer>
         </article>
       </main>
 
       <footer class="footer-actions">
-        <div class="tooltip-info-warning" id="msgWarning" role="status">
+        <div
+          class="tooltip-info-warning"
+          id="msgWarning"
+          style="display: none"
+          data-testid="microtexto-ambar"
+          role="status"
+        >
           ⚠️ Estado preventivo por vencer (≤ 30 días): No procede emisión de
           acta sancionatoria.
         </div>
 
-        <!-- Banner de bloqueo por Idempotencia -->
         <div
           class="banner-already-signed"
           id="bannerAlreadySigned"
+          style="display: none"
+          data-testid="banner-non-bis-in-idem"
           role="status"
-        >
-          ✓ Unidad sancionada en este operativo. No procede doble imposición de
-          sanción (Non Bis In Idem - Ley 27444).
-        </div>
+        ></div>
 
         <div class="footer-buttons-row">
-          <!-- Selector Playwright: #btnActa -->
+          <!-- Inicia disabled hasta que renderVista() valide idempotencia y asigne el manejador -->
           <button
-            class="btn-footer btn-acta-enabled"
+            class="btn-footer btn-acta"
             id="btnActa"
+            data-testid="btn-acta"
+            style="flex: 1.4"
+            type="button"
+            disabled
+          >
+            VERIFICANDO...
+          </button>
+          <button
+            class="btn-footer btn-close"
+            id="btnClose"
+            data-testid="btn-cerrar-consulta"
+            style="flex: 1"
             type="button"
           >
-            GENERAR ACTA DIGITAL
-          </button>
-          <button class="btn-footer btn-close" id="btnClose" type="button">
             CERRAR CONSULTA
           </button>
         </div>
       </footer>
     </div>
 
-    <script>
-      const sessionData = JSON.parse(
-        sessionStorage.getItem("mpch_session") || "{}",
+    <script type="module">
+      import {
+        validarEntradaCampo,
+        evaluarSemaforoVehiculo,
+      } from "/js/domain.js";
+      import { inicializarGuardiaSesion } from "/js/session-guard.js";
+      import { consultarVehiculoConResiliencia } from "/js/offline-db.js";
+      import { getSupabaseClient } from "/js/supabase-client.js";
+
+      inicializarGuardiaSesion([
+        "INSPECTOR_CAMPO",
+        "ESPECIALISTA_OPERATIVO",
+        "ADMIN",
+      ]);
+
+      const now = new Date();
+      document.getElementById("currentDatetime").textContent =
+        `${now.toLocaleDateString("es-PE")} | ${now.toTimeString().slice(0, 5)}`;
+
+      const offlineState = JSON.parse(
+        sessionStorage.getItem("mpch_offline_state") || "{}",
       );
-      if (sessionData.name) {
-        document.getElementById("userNameLabel").textContent = sessionData.name;
-        document.getElementById("userRoleLabel").textContent = sessionData.role;
+      if (offlineState.offline) {
+        document.getElementById("toastMsg").textContent =
+          offlineState.toast ||
+          "Servicio SUNARP no disponible. Consultando datos en caché local";
+        document.getElementById("toastAlerta").classList.add("show");
+        const ind = document.getElementById("indicadorRed");
+        ind.classList.add("offline-mode");
+        ind.setAttribute("aria-label", "Conectividad de red: Modo caché");
+        document.getElementById("textRed").textContent = "Modo caché";
       }
 
       const txtPlacaDni = document.getElementById("txtPlacaDni");
-      const btnClear = document.getElementById("btnClear");
       const btnBuscar = document.getElementById("btnBuscar");
-      const btnQr = document.getElementById("btnQr");
+      const btnClear = document.getElementById("btnClear");
       const btnActa = document.getElementById("btnActa");
-      const btnClose = document.getElementById("btnClose");
 
-      const cardResultado = document.getElementById("cardResultado");
-      const statusIcon = document.getElementById("statusIcon");
-      const statusTitle = document.getElementById("statusTitle");
-      const statusSubtitle = document.getElementById("statusSubtitle");
-      const alertBanner = document.getElementById("alertBanner");
-      const bannerIcon = document.getElementById("bannerIcon");
-      const bannerText = document.getElementById("bannerText");
-      const txtTitular = document.getElementById("txtTitular");
-      const txtPlacaResultado = document.getElementById("txtPlacaResultado");
-      const valSoat = document.getElementById("valSoat");
-      const valCitv = document.getElementById("valCitv");
-      const valPermiso = document.getElementById("valPermiso");
-      const txtModelo = document.getElementById("txtModelo");
-      const footerNote = document.getElementById("footerNote");
-      const msgWarning = document.getElementById("msgWarning");
-      const bannerAlreadySigned = document.getElementById(
-        "bannerAlreadySigned",
-      );
-
-      const activeVehicle = JSON.parse(
-        sessionStorage.getItem("mpch_active_vehicle") || "{}",
-      );
-      const params = new URLSearchParams(window.location.search);
-      const placaParam =
-        params.get("placa") || activeVehicle.placa || "JKL-456";
-      const estadoParam =
-        params.get("estado") || activeVehicle.estado || "infraccion";
-
-      txtPlacaDni.value = placaParam;
-      txtPlacaResultado.textContent = placaParam;
-
-      // --- REVISIÓN DE IDEMPOTENCIA: ¿Ya se emitió acta previa a esta placa? ---
-      const actasEmitidas = JSON.parse(
-        localStorage.getItem("mpch_actas_emitidas") || "{}",
-      );
-      const actaPrevia = actasEmitidas[placaParam];
-
-      if (estadoParam === "warning" || placaParam === "XYZ-789") {
-        txtTitular.textContent = "Carlos Rojas Medina (DNI: 42901844)";
-        txtModelo.textContent = "Nissan Sentra (Año: 2016)";
-        statusTitle.textContent = "ALERTA / POR VENCER";
-        statusTitle.style.color = "#000000";
-        statusSubtitle.textContent =
-          "Documentación próxima a expirar (T ≤ 30 días)";
-        statusIcon.textContent = "⚠";
-        statusIcon.style.color = "#000000";
-        statusIcon.style.backgroundColor = "#F39C12";
-        statusIcon.style.borderColor = "#000000";
-        cardResultado.style.borderColor = "#F39C12";
-        cardResultado.style.boxShadow = "0 4px 16px rgba(243, 156, 18, 0.2)";
-        alertBanner.style.backgroundColor = "#F39C12";
-        alertBanner.style.borderColor = "#d68910";
-        alertBanner.style.color = "#000000";
-        bannerIcon.textContent = "⚠️";
-        bannerIcon.style.color = "#000000";
-        bannerText.textContent =
-          "El SOAT vence el 27/10/2026 (dentro de 10 días). Notifique preventivamente al conductor.";
-        valSoat.innerHTML =
-          '27/10/2026 <span style="color:#000000; font-weight:900;">⚠</span>';
-        valSoat.className = "val-primary";
-        footerNote.textContent =
-          "ℹ️ Registro vigente con alerta preventiva. No aplica medida sancionatoria.";
-
-        btnActa.setAttribute("disabled", "true");
-        btnActa.className = "btn-footer";
-        btnActa.style.backgroundColor = "#cbd5e1";
-        btnActa.style.color = "#64748b";
-        btnActa.style.cursor = "not-allowed";
-        btnActa.style.boxShadow = "none";
-        btnActa.title = "No procede emitir acta en estado preventivo Ámbar";
-        msgWarning.style.display = "block";
-      } else if (placaParam === "ABC-123" || estadoParam === "discrepancia") {
-        txtTitular.textContent = "Mendoza Ruiz, Jorge (DNI: 43992110)";
-        txtModelo.textContent = "Toyota Yaris (Año: 2017)";
-        statusTitle.textContent = "DISCREPANCIA REGISTRAL";
-        statusSubtitle.textContent =
-          "Observación en características registradas en SUNARP";
-        bannerText.textContent =
-          "Color físico Blanco discrepa con Registro SUNARP (Rojo) — Infracción Cód. G.14";
-        valSoat.innerHTML = '14/11/2026 <span class="check">✓</span>';
-        valSoat.className = "val-check";
-        valCitv.innerHTML = '18/12/2026 <span class="check">✓</span>';
-      } else {
-        txtTitular.textContent = "Ana Vargas Pinedo (DNI: 47120938)";
-        txtModelo.textContent = "Hyundai Elantra (Año: 2015)";
-        bannerText.textContent =
-          "SOAT vencido el 30/09/2026 (12 días de mora) — Infracción Cód. M.1";
-        valSoat.innerHTML = '30/09/2026 <span class="cross">✕</span>';
+      async function buscarActaExistenteHoy(placaNormalizada) {
+        try {
+          const sb = await getSupabaseClient();
+          if (sb) {
+            const hoy = new Date().toISOString().slice(0, 10);
+            const { data } = await sb
+              .from("actas_fiscalizacion")
+              .select("*")
+              .eq("placa_normalizada", placaNormalizada)
+              .gte("emitido_en", `${hoy}T00:00:00Z`)
+              .order("emitido_en", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (data) return data;
+          }
+        } catch {
+          // Respaldo local si está offline
+        }
+        const local = JSON.parse(
+          localStorage.getItem("mpch_actas_emitidas") || "{}",
+        );
+        return local[placaNormalizada] || null;
       }
 
-      // APLICACIÓN DEL CANDADO DE NO DUPLICIDAD SI EL ACTA YA EXISTE
-      if (actaPrevia) {
-        bannerAlreadySigned.style.display = "block";
-        bannerAlreadySigned.textContent = `✓ Acta N.° ${actaPrevia.correlativo} ya emitida para esta unidad. Prohibida la doble imposición de sanción (Ley 27444).`;
-        btnActa.textContent = "VER CONSTANCIA QR";
-        btnActa.className = "btn-footer btn-acta-already-emitted";
-        btnActa.title = "Ver constancia digital previamente generada";
-        btnActa.addEventListener("click", () => {
-          sessionStorage.setItem(
-            "mpch_acta_emitida",
-            JSON.stringify(actaPrevia),
+      async function renderVista() {
+        const params = new URLSearchParams(window.location.search);
+        const placaParam = params.get("placa");
+        let vehiculo = JSON.parse(
+          sessionStorage.getItem("mpch_active_vehicle") || "null",
+        );
+
+        if (!vehiculo || (placaParam && vehiculo.placa !== placaParam)) {
+          const entrada = validarEntradaCampo(placaParam || "JKL-456");
+          if (entrada.valido) {
+            const res = await consultarVehiculoConResiliencia(entrada.clave);
+            if (res.ok) vehiculo = res.vehiculo;
+          }
+        }
+
+        if (!vehiculo) {
+          window.location.replace("/consulta-campo");
+          return;
+        }
+
+        const sem = evaluarSemaforoVehiculo(vehiculo);
+        if (sem.estado === "conforme") {
+          window.location.replace(
+            `/resultado-conforme?placa=${encodeURIComponent(vehiculo.placa)}`,
           );
-          window.location.href = `acta-exito.html?correlativo=${encodeURIComponent(actaPrevia.correlativo)}&placa=${encodeURIComponent(actaPrevia.placa)}`;
-        });
-      } else {
-        // Flujo normal de emisión por primera vez
-        btnActa.addEventListener("click", () => {
-          if (btnActa.disabled) return;
-          const datosEmision = {
-            placa: txtPlacaResultado.textContent,
-            titular: txtTitular.textContent,
-            infraccionCod: placaParam === "ABC-123" ? "G.14" : "M.1",
-            infraccionDesc:
-              placaParam === "ABC-123"
-                ? "Discrepancia en características físicas vehiculares frente al registro registral"
-                : "Prestar servicio de transporte sin contar con SOAT vigente",
-            fechaOperativo: "17/10/2026",
-            horaOperativo: "08:35",
+          return;
+        }
+
+        txtPlacaDni.value = vehiculo.placa;
+        document.getElementById("txtPlacaResultado").textContent =
+          vehiculo.placa;
+        document.getElementById("txtTitular").textContent =
+          `${vehiculo.titular}${vehiculo.dni ? ` (DNI: ${vehiculo.dni})` : ""}`;
+        document.getElementById("txtModelo").textContent =
+          `${vehiculo.marca} ${vehiculo.modelo} (Año: ${vehiculo.anioFabricacion})`;
+        document.getElementById("valColor").textContent =
+          vehiculo.color || "No especificado";
+
+        const valSoat = document.getElementById("valSoat");
+        const valCitv = document.getElementById("valCitv");
+        valSoat.textContent = `${vehiculo.soatVence} ${sem.diasSoat < 0 ? "✕" : sem.diasSoat <= 30 ? "⚠" : "✓"}`;
+        valSoat.className =
+          sem.diasSoat < 0
+            ? "val-danger"
+            : sem.diasSoat <= 30
+              ? "val-primary"
+              : "val-check";
+
+        valCitv.textContent = `${vehiculo.citvVence} ${sem.diasCitv < 0 ? "✕" : sem.diasCitv <= 30 ? "⚠" : "✓"}`;
+        valCitv.className =
+          sem.diasCitv < 0
+            ? "val-danger"
+            : sem.diasCitv <= 30
+              ? "val-primary"
+              : "val-check";
+
+        const card = document.getElementById("cardResultado");
+        const icon = document.getElementById("statusIcon");
+        const title = document.getElementById("statusTitle");
+        const subtitle = document.getElementById("statusSubtitle");
+        const alertBanner = document.getElementById("alertBanner");
+        const bannerText = document.getElementById("bannerText");
+        const footerNote = document.getElementById("footerNote");
+        const msgWarning = document.getElementById("msgWarning");
+
+        if (sem.color === "ambar") {
+          card.className =
+            "result-card card-result card-resultado status-warning";
+          icon.className = "status-icon-circle semaforo-ambar";
+          icon.textContent = "⚠";
+          title.textContent = "ALERTA / POR VENCER";
+          title.style.color = "#000000";
+          subtitle.textContent =
+            "Documentación próxima a expirar (0 a 30 días)";
+          alertBanner.className = "tooltip-info-warning";
+          bannerText.textContent = `⚠️ ${sem.motivo}. Notifique preventivamente al conductor.`;
+          footerNote.textContent =
+            "ℹ️ Registro vigente con alerta preventiva. No aplica sanción.";
+
+          btnActa.textContent = "GENERAR ACTA DIGITAL";
+          btnActa.disabled = true;
+          btnActa.className = "btn-footer btn-acta";
+          msgWarning.style.display = "block";
+          return;
+        }
+
+        // Primero verificar idempotencia antes de mostrar .semaforo-rojo y habilitar #btnActa
+        const actaPrevia = await buscarActaExistenteHoy(
+          vehiculo.placaNormalizada,
+        );
+
+        if (actaPrevia) {
+          const banner = document.getElementById("bannerAlreadySigned");
+          banner.style.display = "block";
+          banner.textContent = `✓ Acta N.° ${actaPrevia.correlativo} ya emitida hoy para esta unidad (Non Bis In Idem - Ley 27444).`;
+          btnActa.textContent = "VER CONSTANCIA QR";
+          btnActa.className = "btn-footer btn-acta-already-emitted";
+          btnActa.onclick = () => {
+            sessionStorage.setItem(
+              "mpch_acta_emitida",
+              JSON.stringify(actaPrevia),
+            );
+            window.location.href = `/acta-exito?correlativo=${encodeURIComponent(actaPrevia.correlativo)}&placa=${encodeURIComponent(vehiculo.placa)}`;
           };
-          sessionStorage.setItem(
-            "mpch_acta_pendiente",
-            JSON.stringify(datosEmision),
-          );
-          window.location.href = `index4.html?placa=${encodeURIComponent(datosEmision.placa)}&infraccion=${encodeURIComponent(datosEmision.infraccionCod)}&titular=${encodeURIComponent(datosEmision.titular)}`;
-        });
+          btnActa.disabled = false;
+        } else {
+          btnActa.textContent = "GENERAR ACTA DIGITAL";
+          btnActa.className = "btn-footer btn-acta-enabled";
+          btnActa.onclick = () => {
+            sessionStorage.setItem(
+              "mpch_acta_pendiente",
+              JSON.stringify({
+                placa: vehiculo.placa,
+                placaNormalizada: vehiculo.placaNormalizada,
+                titular: vehiculo.titular,
+                dni: vehiculo.dni || "00000000",
+                vehiculoDesc: `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.anioFabricacion})`,
+                color: vehiculo.color,
+                infraccionCod: sem.infraccionCod,
+                infraccionDesc: sem.motivo,
+              }),
+            );
+            window.location.href = `/emision-acta?placa=${encodeURIComponent(vehiculo.placa)}`;
+          };
+          btnActa.disabled = false;
+        }
+
+        card.className =
+          "result-card card-result card-resultado status-infraccion";
+        icon.className = "status-icon-circle semaforo-rojo";
+        icon.textContent = "✕";
+        title.textContent = vehiculo.discrepanciaSunarp
+          ? "DISCREPANCIA REGISTRAL"
+          : "INHABILITADO / VENCIDO";
+        title.style.color = "#C0392B";
+        subtitle.textContent = `Infracción tipificada Cód. ${sem.infraccionCod}`;
+        alertBanner.className = "alert-banner-accessible";
+        bannerText.textContent = `⛔ ${sem.motivo} — Infracción Cód. ${sem.infraccionCod}`;
       }
+      renderVista();
+
+      txtPlacaDni.addEventListener("input", (e) => {
+        e.target.value = e.target.value
+          .replace(/[^a-zA-Z0-9-]/g, "")
+          .toUpperCase();
+        btnBuscar.disabled = !validarEntradaCampo(e.target.value).valido;
+      });
 
       btnClear.addEventListener("click", () => {
         txtPlacaDni.value = "";
+        btnBuscar.disabled = true;
         txtPlacaDni.focus();
       });
 
-      btnBuscar.addEventListener("click", () => {
-        const val = txtPlacaDni.value.trim().toUpperCase().replace("-", "");
-        if (!val) {
-          window.location.href = "index1.html";
+      btnBuscar.addEventListener("click", async () => {
+        const entrada = validarEntradaCampo(txtPlacaDni.value);
+        if (!entrada.valido) return;
+        btnBuscar.disabled = true;
+        btnBuscar.textContent = "CONSULTANDO...";
+
+        const res = await consultarVehiculoConResiliencia(entrada.clave);
+        if (!res.ok) {
+          window.location.href = "/consulta-campo";
           return;
         }
-        if (val === "V1A309" || val === "40812943") {
-          window.location.href = "index2.html?placa=V1A-309&estado=conforme";
-        } else if (val === "XYZ789" || val === "42901844") {
-          window.location.href = "index3.html?placa=XYZ-789&estado=warning";
-        } else if (val === "JKL456" || val === "47120938") {
-          window.location.href = "index3.html?placa=JKL-456&estado=infraccion";
-        } else if (val === "ABC123") {
-          window.location.href = "index3.html?placa=ABC-123&estado=infraccion";
-        } else {
-          window.location.href = "index1.html";
-        }
+        const sem = evaluarSemaforoVehiculo(res.vehiculo);
+        sessionStorage.setItem(
+          "mpch_active_vehicle",
+          JSON.stringify({ ...res.vehiculo, semaforo: sem }),
+        );
+        sessionStorage.setItem(
+          "mpch_offline_state",
+          JSON.stringify({ offline: res.offline, toast: res.toast || "" }),
+        );
+        window.location.href =
+          sem.estado === "conforme"
+            ? `/resultado-conforme?placa=${encodeURIComponent(res.vehiculo.placa)}`
+            : `/resultado-infraccion?placa=${encodeURIComponent(res.vehiculo.placa)}&estado=${sem.estado}`;
       });
 
       txtPlacaDni.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") btnBuscar.click();
+        if (e.key === "Enter" && !btnBuscar.disabled) btnBuscar.click();
       });
 
-      btnClose.addEventListener("click", () => {
-        window.location.href = "index1.html";
-      });
-
-      btnQr.addEventListener("click", () => {
-        alert("Activando escáner de cámara para verificación documental.");
+      document.getElementById("btnClose").addEventListener("click", () => {
+        window.location.href = "/consulta-campo";
       });
     </script>
   </body>
