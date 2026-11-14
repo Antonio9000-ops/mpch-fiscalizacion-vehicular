@@ -11,17 +11,11 @@
     }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/login.html" },
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/consulta-campo", "destination": "/index1.html" },
-    { "source": "/resultado-conforme", "destination": "/index2.html" },
-    { "source": "/resultado-infraccion", "destination": "/index3.html" },
-    { "source": "/emision-acta", "destination": "/index4.html" },
-    { "source": "/acta-exito", "destination": "/acta-exito.html" },
-    { "source": "/fichas", "destination": "/fichas.html" },
-    { "source": "/inscripcion", "destination": "/inscripcion.html" },
-    { "source": "/chatbot", "destination": "/chatbot.html" },
-    { "source": "/403", "destination": "/403.html" },
+    { "source": "/", "destination": "/login" },
+    { "source": "/consulta-campo", "destination": "/index1" },
+    { "source": "/resultado-conforme", "destination": "/index2" },
+    { "source": "/resultado-infraccion", "destination": "/index3" },
+    { "source": "/emision-acta", "destination": "/index4" },
     {
       "source": "/admin/configuracion",
       "destination": "/api/admin/configuracion"
